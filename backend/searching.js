@@ -1,14 +1,15 @@
 import { Content } from './db.js';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { Pinecone } from '@pinecone-database/pinecone';
+import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 dotenv.config();
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY });
 
-const EMBEDDING_MODEL = process.env.EMBEDDING_MODEL || "embedding-001"; 
-const CHAT_MODEL = process.env.CHAT_MODEL || "gemini-1.5-pro"; 
+const EMBEDDING_MODEL = process.env.EMBEDDING_MODEL || "embedding-001";
+const CHAT_MODEL = process.env.CHAT_MODEL || "Gemini-pro";
 
 let INDEX_DIM = 0; // will auto-detect
 
@@ -46,13 +47,13 @@ async function ensureIndex() {
 
     console.log(`⏳ Creating Pinecone index '${indexName}' ...`);
     await pinecone.createIndex({
-  name: process.env.PINECONE_INDEX ||"secondbrain-index",
-  dimension: 768,
-  metric: "cosine",
-  spec: {
-    serverless: { cloud: "aws", region: "us-east-1" }
-  }
-});
+      name: process.env.PINECONE_INDEX || "secondbrain-index",
+      dimension: 768,
+      metric: "cosine",
+      spec: {
+        serverless: { cloud: "aws", region: "us-east-1" }
+      }
+    });
 
     console.log('✅ Index created. It may take a minute to be ready.');
   } catch (error) {
@@ -127,7 +128,7 @@ async function embedBatch(texts) {
 
 // Pinecone ID helpers
 function toPineconeId(mongoId, userId, n = 0) {
-  return `${userId}::${mongoId}::${n}`; 
+  return `${userId}::${mongoId}::${n}`;
 }
 function parsePineconeId(id) {
   const [userId, mongoId, n] = id.split('::');
@@ -148,11 +149,12 @@ async function ingestDocument({ userId, title = '', text, tags = [], link = '' }
     createdAt: now,
     updatedAt: now,
   });
-  const savedContent = await newContent.save();
+  const savedContent = (await newContent.save());
+  
 
-  const chunks = chunkText(text);
+  const chunks = chunkText(text)
   const embeddings = await embedBatch(chunks);
-
+  
   if (!embeddings.length) {
     console.error("❌ No embeddings generated, skipping Pinecone upsert.");
     return { id: savedContent._id.toString(), chunks: 0 };
@@ -169,29 +171,31 @@ async function ingestDocument({ userId, title = '', text, tags = [], link = '' }
       preview: chunks[i].slice(0, 400),
       tags,
     },
-  }));
+  }))
 
   await pcIndex.upsert(vectors);
+  
 
   return { id: savedContent._id.toString(), chunks: chunks.length };
 }
 
-// ---------- Retrieval ----------
-async function retrieveUserContext({ userId, query, topK = Number(process.env.TOPK_DEFAULT) || 5 }) {
-  // Debug listing with dummy vector
-  console.log("🔍 Debugging docs for user:", userId);
-  const debugRes = await pcIndex.query({
-    vector: Array(INDEX_DIM).fill(0),
-    topK: 5,
-    includeMetadata: true,
-    filter: { userId: { $eq: userId } }
-  });
-  console.log("Debug matches:", JSON.stringify(debugRes, null, 2));
 
-  // Real query
-  const [qVec] = await embedBatch([query]);
+async function retrieveUserContext({ userId, query, topK = Number(process.env.TOPK_DEFAULT) || 5 }) {
+  // Kick off embedding + debug Pinecone query in parallel
+  const [qVec, debugRes] = await Promise.all([
+    embedBatch([query]).then(([v]) => v),
+    pcIndex.query({
+      vector: Array(INDEX_DIM).fill(0),
+      topK: 5,
+      includeMetadata: true,
+      filter: { userId: { $eq: userId } }
+    }).catch(err => { console.warn("Debug query skipped:", err.message); return null; })
+  ]);
+
+  if (debugRes) console.log("Debug matches:", JSON.stringify(debugRes, null, 2));
   if (!qVec) throw new Error("❌ Query embedding failed.");
 
+  // Now query Pinecone with real vector
   const result = await pcIndex.query({
     vector: qVec,
     topK,
@@ -211,18 +215,22 @@ async function retrieveUserContext({ userId, query, topK = Number(process.env.TO
     if (m.metadata?.preview) entry.pieces.push(m.metadata.preview);
   }
 
+  // Fetch docs in parallel
   const ids = [...byDoc.keys()];
   const docs = ids.length ? await Content.find({ _id: { $in: ids } }) : [];
-  const scored = docs.map(d => ({
-      doc: d,
-      score: byDoc.get(d._id.toString())?.score ?? 0,
-      previews: byDoc.get(d._id.toString())?.pieces ?? [],
-    }))
-    .sort((a, b) => b.score - a.score);
 
+  // scoring
+  const scored = docs.map(d => ({
+    doc: d,
+    score: byDoc.get(d._id.toString())?.score ?? 0,
+    previews: byDoc.get(d._id.toString())?.pieces ?? [],
+  })).sort((a, b) => b.score - a.score);
+
+  // Build context
   const MAX_CTX_CHARS = 7000;
-  const contextBlocks = [];
   let used = 0;
+  const contextBlocks = [];
+
   for (const item of scored) {
     const header = `# ${item.doc.title || 'Untitled'} (doc:${item.doc._id})\n`;
     const body = (item.previews.join('\n')) || item.doc.text.slice(0, 1200);
@@ -232,19 +240,31 @@ async function retrieveUserContext({ userId, query, topK = Number(process.env.TO
     used += block.length;
   }
 
-  return { matches, context: contextBlocks.join('\n'), sources: scored.map(s => ({ id: s.doc._id.toString(), title: s.doc.title, score: s.score })) };
+  return {
+    matches,
+    context: contextBlocks.join('\n'),
+    sources: scored.map(s => ({ id: s.doc._id.toString(), title: s.doc.title, score: s.score }))
+  };
 }
 
-// ---------- RAG ----------
-async function answerWithRAG({ userId, query, topK }) {
-  const { context, sources } = await retrieveUserContext({ userId, query, topK });
-  console.log('Context for query:', context);
-  console.log('Sources for query:', sources);
 
-  const prompt = `
-You are a helpful assistant. 
+// ---------- RAG ----------
+const model = genAI.getGenerativeModel({ model: CHAT_MODEL }); // move outside for reuse
+
+async function answerWithRAG({ userId, query, topK }) {
+
+  // Step 1: Run retrieval and query embedding in parallel
+  const [{ context, sources }] = await Promise.all([
+    retrieveUserContext({ userId, query, topK }),
+  ]);
+
+  // Step 2: Build prompt
+  const prompt = `You are a helpful assistant. 
 Only answer using the provided context. 
 If the context does not contain enough info, say "I don't have enough information."
+
+First, briefly elaborate or explain the question in 6-7 lines of paragraph to show understanding.  
+Then, provide the best possible answer using only the context.  
 
 Question: ${query}
 
@@ -254,21 +274,22 @@ ${context}
 Answer:
 `;
 
-  const model = genAI.getGenerativeModel({ model: CHAT_MODEL });
+  // Step 3: Generate with reused model
   const result = await model.generateContent(prompt);
   const answer = result.response.text();
 
   return { answer, sources };
 }
 
+
 async function deleteContent({ id, userId }) {
   if (!id || !userId) throw new Error('id and userId are required');
-  
-const index = pinecone.index(process.env.PINECONE_INDEX);
 
-const ns = index.namespace('__default__');
-await ns.deleteOne(toPineconeId(id, userId));
+  const index = pinecone.index(process.env.PINECONE_INDEX);
+
+  const ns = index.namespace('__default__');
+  await ns.deleteOne(toPineconeId(id, userId));
   return { success: true };
 }
 
-export { ingestDocument, retrieveUserContext, answerWithRAG, toPineconeId, parsePineconeId ,chunkText,deleteContent};
+export { ingestDocument, retrieveUserContext, answerWithRAG, toPineconeId, parsePineconeId, chunkText, deleteContent };

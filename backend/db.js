@@ -21,8 +21,14 @@ const contentSchema = new Schema({
     updatedAt: { type: Date, default: Date.now }
 });
 
+const LinkSchema =new Schema({
+    hash:String,
+    userId:{type:mongoose.Schema.Types.ObjectId,ref:"User",required:true}
+})
+
 // Create models
 export const User = model("User", userSchema);
 export const Content = model("Content", contentSchema);
+export const Link = model("Links",LinkSchema)
 
  

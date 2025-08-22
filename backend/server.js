@@ -32,6 +32,7 @@ connectDB();
 // Routes
 app.use("/api/user", UserRoute);
 
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ 
