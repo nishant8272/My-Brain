@@ -2,6 +2,71 @@ import { Content } from '../models/Content.js';
 import { AppError } from '../utils/AppError.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { upsertDocumentVectors, deleteDocumentVector } from '../services/pineconeService.js';
+import { enrichContentData } from '../services/aiEnrichmentService.js';
+export const enrichContent = asyncHandler(async (req, res, next) => {
+    const { url, text, title, type } = req.body;
+    if (!url && !text) {
+        return next(new AppError('URL or text is required for AI enrichment', 400));
+    }
+    const result = await enrichContentData({
+        url,
+        rawText: text,
+        userTitle: title,
+        typeHint: type,
+    });
+    res.status(200).json({
+        success: true,
+        data: result,
+    });
+});
+export const getKnowledgeGraph = asyncHandler(async (req, res, next) => {
+    const userId = req.userId;
+    const contents = await Content.find({ userId }).sort({ createdAt: -1 });
+    const nodes = [];
+    const edges = [];
+    const tagNodesSet = new Set();
+    contents.forEach((item) => {
+        const itemId = item._id.toString();
+        nodes.push({
+            id: itemId,
+            label: item.title || 'Untitled Card',
+            type: item.type || 'document',
+            details: {
+                link: item.link,
+                textSnippet: item.text?.slice(0, 100),
+                tags: item.tags,
+                isFavorite: item.isFavorite,
+            },
+        });
+        if (Array.isArray(item.tags)) {
+            item.tags.forEach((tag) => {
+                const cleanTag = tag.trim().toLowerCase();
+                if (!cleanTag)
+                    return;
+                const tagId = `tag:${cleanTag}`;
+                if (!tagNodesSet.has(tagId)) {
+                    tagNodesSet.add(tagId);
+                    nodes.push({
+                        id: tagId,
+                        label: `#${cleanTag}`,
+                        type: 'tag',
+                    });
+                }
+                edges.push({
+                    id: `edge:${itemId}-${tagId}`,
+                    source: itemId,
+                    target: tagId,
+                    label: 'tagged',
+                });
+            });
+        }
+    });
+    res.status(200).json({
+        success: true,
+        nodes,
+        edges,
+    });
+});
 export const createContent = asyncHandler(async (req, res, next) => {
     const { title, text, link, type = 'document', tags = [] } = req.body;
     const userId = req.userId;

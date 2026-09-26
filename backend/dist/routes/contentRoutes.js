@@ -1,8 +1,10 @@
 import { Router } from 'express';
-import { createContent, getContents, updateContent, toggleFavorite, deleteContent, batchDeleteContent, getContentStats } from '../controllers/contentController.js';
+import { createContent, getContents, updateContent, toggleFavorite, deleteContent, batchDeleteContent, getContentStats, enrichContent, getKnowledgeGraph } from '../controllers/contentController.js';
 import { userMiddleware } from '../middleware/authMiddleware.js';
 const router = Router();
 router.use(userMiddleware);
+router.get('/graph', getKnowledgeGraph);
+router.post('/enrich', enrichContent);
 router.post('/', createContent);
 router.get('/', getContents);
 router.get('/stats', getContentStats);

@@ -6,7 +6,9 @@ import {
   toggleFavorite, 
   deleteContent, 
   batchDeleteContent, 
-  getContentStats 
+  getContentStats,
+  enrichContent,
+  getKnowledgeGraph
 } from '../controllers/contentController.js';
 import { userMiddleware } from '../middleware/authMiddleware.js';
 
@@ -14,6 +16,8 @@ const router = Router();
 
 router.use(userMiddleware);
 
+router.get('/graph', getKnowledgeGraph);
+router.post('/enrich', enrichContent);
 router.post('/', createContent);
 router.get('/', getContents);
 router.get('/stats', getContentStats);

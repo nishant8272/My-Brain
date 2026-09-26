@@ -20,7 +20,9 @@ import {
   toggleFavorite, 
   deleteContent, 
   batchDeleteContent, 
-  getContentStats 
+  getContentStats,
+  enrichContent,
+  getKnowledgeGraph
 } from '../controllers/contentController.js';
 import { shareBrain, getSharedBrain } from '../controllers/shareController.js';
 import { userMiddleware } from '../middleware/authMiddleware.js';
@@ -43,6 +45,8 @@ router.post('/signup', signup);
 router.post('/signin', signin);
 router.get('/me', userMiddleware, getProfile);
 
+router.get('/content/graph', userMiddleware, getKnowledgeGraph);
+router.post('/content/enrich', userMiddleware, enrichContent);
 router.post('/content', userMiddleware, createContent);
 router.get('/content', userMiddleware, getContents);
 router.get('/content/stats', userMiddleware, getContentStats);
