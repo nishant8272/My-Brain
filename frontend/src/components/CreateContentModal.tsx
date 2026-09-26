@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, FileText, Link2, Plus, Sparkles, Loader2 } from 'lucide-react';
+import { X, FileText, Link2, Plus, Sparkles, Loader2, Wand2 } from 'lucide-react';
 import { YoutubeIcon, TwitterIcon } from './Icons';
 import type { ContentType } from '../types';
 import { api } from '../services/api';
@@ -23,9 +23,41 @@ export const CreateContentModal: React.FC<CreateContentModalProps> = ({
   const [tagInput, setTagInput] = useState('');
   const [tags, setTags] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isEnriching, setIsEnriching] = useState(false);
   const { showToast } = useToast();
 
   if (!isOpen) return null;
+
+  const handleAutoEnrich = async () => {
+    if (!link.trim() && !text.trim()) {
+      showToast('Enter a URL or text content to use AI Auto-Enrichment', 'error');
+      return;
+    }
+
+    setIsEnriching(true);
+    try {
+      const res = await api.enrichContent({
+        url: link.trim() || undefined,
+        text: text.trim() || undefined,
+        title: title.trim() || undefined,
+        type,
+      });
+
+      if (res.data) {
+        if (res.data.title) setTitle(res.data.title);
+        if (res.data.text) setText(res.data.text);
+        if (res.data.type) setType(res.data.type);
+        if (res.data.tags && res.data.tags.length > 0) {
+          setTags((prev) => Array.from(new Set([...prev, ...res.data.tags])));
+        }
+        showToast('✨ AI auto-scraped content and generated summary & tags!', 'success');
+      }
+    } catch (err: any) {
+      showToast(err.message || 'AI enrichment failed', 'error');
+    } finally {
+      setIsEnriching(false);
+    }
+  };
 
   const handleAddTag = () => {
     const trimmed = tagInput.trim().replace(/^#/, '');
@@ -153,9 +185,29 @@ export const CreateContentModal: React.FC<CreateContentModalProps> = ({
           {/* Link URL */}
           {(type === 'youtube' || type === 'twitter' || type === 'link') && (
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-                URL / Link
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                  URL / Link
+                </label>
+                <button
+                  type="button"
+                  onClick={handleAutoEnrich}
+                  disabled={isEnriching || (!link.trim() && !text.trim())}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-purple-400 hover:text-purple-300 disabled:opacity-40 transition-colors"
+                >
+                  {isEnriching ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-purple-400" />
+                      <span>Scraping & Summarizing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Wand2 className="w-3.5 h-3.5 text-purple-400" />
+                      <span>Auto-Enrich with AI</span>
+                    </>
+                  )}
+                </button>
+              </div>
               <input
                 type="url"
                 value={link}

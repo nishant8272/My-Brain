@@ -12,11 +12,14 @@
   "dependencies": {
     "@clerk/clerk-react": "^5.43.1",
     "@tailwindcss/vite": "^4.1.12",
+    "@types/three": "^0.186.0",
+    "3d-force-graph": "^1.80.0",
     "lucide-react": "^1.48.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-markdown": "^10.1.0",
-    "react-router-dom": "^7.9.1"
+    "react-router-dom": "^7.9.1",
+    "three": "^0.186.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",

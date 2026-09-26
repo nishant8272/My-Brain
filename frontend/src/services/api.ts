@@ -52,6 +52,42 @@ export const api = {
     return res.json();
   },
 
+  async getKnowledgeGraph(): Promise<{
+    success: boolean;
+    nodes: Array<{ id: string; label: string; type: string; details?: any }>;
+    edges: Array<{ id: string; source: string; target: string; label?: string }>;
+  }> {
+    const res = await fetch(`${API_BASE_URL}/content/graph`, {
+      headers: getHeaders(),
+    });
+    if (!res.ok) throw new Error('Failed to fetch knowledge graph');
+    return res.json();
+  },
+
+  async enrichContent(data: { url?: string; text?: string; title?: string; type?: ContentType }): Promise<{
+    success: boolean;
+    data: {
+      title: string;
+      summary: string;
+      text: string;
+      link?: string;
+      type: ContentType;
+      tags: string[];
+      heroImage?: string;
+    };
+  }> {
+    const res = await fetch(`${API_BASE_URL}/content/enrich`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    if (!res.ok || result.error) {
+      throw new Error(result.error || result.details || 'Failed to enrich content with AI');
+    }
+    return result;
+  },
+
   async addContent(data: { title: string; text?: string; link?: string; tags?: string[]; type?: ContentType }): Promise<{ success: boolean; content: ContentItem }> {
     const res = await fetch(`${API_BASE_URL}/content`, {
       method: 'POST',

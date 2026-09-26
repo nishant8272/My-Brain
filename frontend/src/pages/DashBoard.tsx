@@ -11,6 +11,8 @@ import { api } from '../services/api';
 import { Plus, Sparkles, Inbox, Filter, Tag, Menu, Brain } from 'lucide-react';
 
 import { CardDetailModal } from '../components/CardDetailModal';
+import { CommandPalette } from '../components/CommandPalette';
+import { KnowledgeGraphModal } from '../components/KnowledgeGraphModal';
 
 export const DashBoard: React.FC = () => {
   const [contents, setContents] = useState<ContentItem[]>([]);
@@ -24,6 +26,8 @@ export const DashBoard: React.FC = () => {
   const [isAskAiOpen, setIsAskAiOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isGraphModalOpen, setIsGraphModalOpen] = useState(false);
   const [selectedCardForModal, setSelectedCardForModal] = useState<ContentItem | null>(null);
 
   const { showToast } = useToast();
@@ -44,6 +48,15 @@ export const DashBoard: React.FC = () => {
 
   useEffect(() => {
     fetchContents();
+
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsCommandPaletteOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
   }, []);
 
   const handleDelete = async (id: string) => {
@@ -105,7 +118,9 @@ export const DashBoard: React.FC = () => {
   const filteredContents = useMemo(() => {
     return contents.filter((item) => {
       // 1. Type filter
-      if (activeType !== 'all' && item.type !== activeType) {
+      if (activeType === 'favorites') {
+        if (!item.isFavorite) return false;
+      } else if (activeType !== 'all' && item.type !== activeType) {
         return false;
       }
       // 2. Tag filter
@@ -176,6 +191,8 @@ export const DashBoard: React.FC = () => {
           openAddModal={() => setIsAddModalOpen(true)}
           openShareModal={() => setIsShareModalOpen(true)}
           openAskAi={() => setIsAskAiOpen(true)}
+          openCommandPalette={() => setIsCommandPaletteOpen(true)}
+          openGraphModal={() => setIsGraphModalOpen(true)}
           totalItems={filteredContents.length}
           activeType={activeType}
         />
@@ -309,6 +326,23 @@ export const DashBoard: React.FC = () => {
       <ShareBrainModal
         isOpen={isShareModalOpen}
         onClose={() => setIsShareModalOpen(false)}
+      />
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        cards={contents}
+        tags={uniqueTags}
+        onSelectCard={(card) => setSelectedCardForModal(card)}
+        onSelectTag={(tag) => setSelectedTag(tag)}
+        onOpenAddModal={() => setIsAddModalOpen(true)}
+        onOpenAskAi={() => setIsAskAiOpen(true)}
+        onOpenShareModal={() => setIsShareModalOpen(true)}
+        onFilterFavorites={() => setActiveType('favorites')}
+      />
+      <KnowledgeGraphModal
+        isOpen={isGraphModalOpen}
+        onClose={() => setIsGraphModalOpen(false)}
+        onSelectTag={(tag) => setSelectedTag(tag)}
       />
     </div>
   );

@@ -1,4 +1,4 @@
-export type ContentType = 'youtube' | 'twitter' | 'document' | 'link' | 'note' | 'all';
+export type ContentType = 'youtube' | 'twitter' | 'document' | 'link' | 'note' | 'article' | 'favorites' | 'all';
 
 export interface ContentItem {
   _id: string;
