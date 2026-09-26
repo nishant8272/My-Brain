@@ -1,7 +1,5 @@
 {
   "dependencies": {
-    "@google/genai": "^1.14.0",
-    "@google/generative-ai": "^0.24.1",
     "@pinecone-database/pinecone": "^6.1.2",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",

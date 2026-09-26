@@ -1,27 +1,86 @@
-import Button from "./components/Button"
-import {Plusicon} from "../icons/Plusicon.tsx"
-import Shareicon from "../icons/ShareIcon.tsx"
-import {Card }from "./components/Card.tsx"
-import { CreateContent } from "./components/CreateContent.tsx"
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { ToastProvider } from './components/Toast';
+import { DashBoard } from './pages/DashBoard';
+import { Signin } from './pages/Signin';
+import { Signup } from './pages/Signup';
+import { SharedBrain } from './pages/SharedBrain';
+import { Loader2 } from 'lucide-react';
+
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { token, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-purple-400">
+        <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!token) {
+    return <Navigate to="/signin" replace />;
+  }
+
+  return <>{children}</>;
+};
+
+const PublicOnlyRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { token, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-purple-400">
+        <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (token) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <>{children}</>;
+};
+
 function App() {
-  //@ts-ignore
-  const tag=["hello","bye","everyone"]
   return (
-    <> 
-    <div className="p-4">
-      <CreateContent open={true}/>
-     <div className="flex justify-end gap-4">
-       <Button variant="primary" text="Add Content" startIcon={<Plusicon/>}></Button>
-      <Button variant="secondary" text="Share Brain" startIcon={<Shareicon/>}></Button>
-     </div> 
-     <div className="flex gap-5 ">
-      <Card title="hello eveyone" type="youtube" text="i am a developer." Tags={tag} link="https://www.youtube.com/watch?v=EvzNDQLwCqw"/>
-      <Card title="hello eveyone" type="youtube" text="i am a developer." Tags={tag} link="https://www.youtube.com/watch?v=EvzNDQLwCqw"/>
-      <Card title="hello eveyone" type="twitter" text="i am a developer." Tags={tag} link="https://x.com/narendramodi/status/1958465156305821996"/>
-    </div>
-    </div>
-    </>
-  )
+    <BrowserRouter>
+      <AuthProvider>
+        <ToastProvider>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <DashBoard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/signin"
+              element={
+                <PublicOnlyRoute>
+                  <Signin />
+                </PublicOnlyRoute>
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                <PublicOnlyRoute>
+                  <Signup />
+                </PublicOnlyRoute>
+              }
+            />
+            <Route path="/share/:hash" element={<SharedBrain />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </ToastProvider>
+      </AuthProvider>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;

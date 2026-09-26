@@ -1,2 +1,56 @@
-
 @import "tailwindcss";
+
+@layer utilities {
+  /* Custom scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.2);
+    border-radius: 9999px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.4);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideLeft {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-left {
+  animation: slideLeft 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes bounceSubtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.animate-bounce-subtle {
+  animation: bounceSubtle 3s ease-in-out infinite;
+}
