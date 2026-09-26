@@ -1,6 +1,6 @@
-import type { AuthResponse, ContentItem, AskResponse, SharedBrainResponse, ContentType, ChatMessage } from '../types';
+import type { AuthResponse, ContentItem, AskResponse, SharedBrainResponse, ContentType, ChatMessage, ChatSessionItem } from '../types';
 
-const API_BASE_URL = 'http://localhost:3000/api/user';
+const API_BASE_URL = 'http://localhost:3000/api/user' ;
 
 const getHeaders = () => {
   const token = localStorage.getItem('token');
@@ -75,29 +75,108 @@ export const api = {
     return result;
   },
 
+  async updateContent(id: string, data: Partial<ContentItem>): Promise<{ success: boolean; content: ContentItem }> {
+    const res = await fetch(`${API_BASE_URL}/content/${id}`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(data),
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || 'Failed to update content');
+    return result;
+  },
+
+  async toggleFavorite(id: string): Promise<{ success: boolean; content: ContentItem }> {
+    const res = await fetch(`${API_BASE_URL}/content/${id}/favorite`, {
+      method: 'PATCH',
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || 'Failed to toggle favorite');
+    return result;
+  },
+
+  async batchDeleteContent(ids: string[]): Promise<{ success: boolean; message: string }> {
+    const res = await fetch(`${API_BASE_URL}/content/batch-delete`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({ ids }),
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || 'Failed to batch delete content');
+    return result;
+  },
+
+  async getContentStats(): Promise<{ success: boolean; counts: Record<string, number>; tags: string[] }> {
+    const res = await fetch(`${API_BASE_URL}/content/stats`, {
+      headers: getHeaders(),
+    });
+    if (!res.ok) throw new Error('Failed to fetch content stats');
+    return res.json();
+  },
+
   // AI RAG & Chat APIs
-  async getChat(): Promise<{ success: boolean; messages: ChatMessage[] }> {
-    const res = await fetch(`${API_BASE_URL}/chat`, {
+  async getChat(sessionId?: string): Promise<{ success: boolean; sessionId?: string; sessionTitle?: string; messages: ChatMessage[]; sessions?: ChatSessionItem[] }> {
+    const url = sessionId ? `${API_BASE_URL}/chat?sessionId=${sessionId}` : `${API_BASE_URL}/chat`;
+    const res = await fetch(url, {
       headers: getHeaders(),
     });
     if (!res.ok) throw new Error('Failed to load chat history');
     return res.json();
   },
 
-  async clearChat(): Promise<{ success: boolean }> {
+  async getChatSessions(): Promise<{ success: boolean; sessions: ChatSessionItem[] }> {
+    const res = await fetch(`${API_BASE_URL}/chat/sessions`, {
+      headers: getHeaders(),
+    });
+    if (!res.ok) throw new Error('Failed to load chat sessions');
+    return res.json();
+  },
+
+  async createChatSession(title?: string): Promise<{ success: boolean; session: ChatSessionItem }> {
+    const res = await fetch(`${API_BASE_URL}/chat/sessions`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({ title: title || 'New Conversation' }),
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || 'Failed to create chat session');
+    return result;
+  },
+
+  async getChatSessionMessages(sessionId: string): Promise<{ success: boolean; session: ChatSessionItem; messages: ChatMessage[] }> {
+    const res = await fetch(`${API_BASE_URL}/chat/sessions/${sessionId}`, {
+      headers: getHeaders(),
+    });
+    if (!res.ok) throw new Error('Failed to fetch session messages');
+    return res.json();
+  },
+
+  async deleteChatSession(sessionId: string): Promise<{ success: boolean; message: string }> {
+    const res = await fetch(`${API_BASE_URL}/chat/sessions/${sessionId}`, {
+      method: 'DELETE',
+      headers: getHeaders(),
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || 'Failed to delete chat session');
+    return result;
+  },
+
+  async clearChat(sessionId?: string): Promise<{ success: boolean }> {
     const res = await fetch(`${API_BASE_URL}/chat`, {
       method: 'DELETE',
       headers: getHeaders(),
+      body: JSON.stringify({ sessionId }),
     });
     if (!res.ok) throw new Error('Failed to clear chat history');
     return res.json();
   },
 
-  async askAi(query: string): Promise<AskResponse> {
+  async askAi(query: string, sessionId?: string): Promise<AskResponse> {
     const res = await fetch(`${API_BASE_URL}/ask`, {
       method: 'POST',
       headers: getHeaders(),
-      body: JSON.stringify({ query }),
+      body: JSON.stringify({ query, sessionId }),
     });
     const result = await res.json();
     if (!res.ok) throw new Error(result.error || 'Failed to ask AI');

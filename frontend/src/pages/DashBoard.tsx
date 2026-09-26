@@ -8,7 +8,9 @@ import { ShareBrainModal } from '../components/ShareBrainModal';
 import { useToast } from '../components/Toast';
 import type { ContentItem, ContentType } from '../types';
 import { api } from '../services/api';
-import { Plus, Sparkles, Inbox, Filter, Tag } from 'lucide-react';
+import { Plus, Sparkles, Inbox, Filter, Tag, Menu, Brain } from 'lucide-react';
+
+import { CardDetailModal } from '../components/CardDetailModal';
 
 export const DashBoard: React.FC = () => {
   const [contents, setContents] = useState<ContentItem[]>([]);
@@ -17,10 +19,12 @@ export const DashBoard: React.FC = () => {
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  // Modals
+  // Modals & Drawers
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isAskAiOpen, setIsAskAiOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [selectedCardForModal, setSelectedCardForModal] = useState<ContentItem | null>(null);
 
   const { showToast } = useToast();
 
@@ -49,6 +53,23 @@ export const DashBoard: React.FC = () => {
       showToast('Content deleted from your Second Brain', 'success');
     } catch (err: any) {
       showToast(err.message || 'Failed to delete content', 'error');
+    }
+  };
+
+  const handleToggleFavorite = async (id: string) => {
+    try {
+      const res = await api.toggleFavorite(id);
+      if (res.content) {
+        setContents((prev) =>
+          prev.map((item) => (item._id === id ? { ...item, isFavorite: res.content.isFavorite } : item))
+        );
+        showToast(
+          res.content.isFavorite ? 'Content pinned to favorites!' : 'Content unpinned from favorites!',
+          'success'
+        );
+      }
+    } catch (err: any) {
+      showToast(err.message || 'Failed to toggle favorite', 'error');
     }
   };
 
@@ -104,8 +125,8 @@ export const DashBoard: React.FC = () => {
   }, [contents, activeType, selectedTag, searchQuery]);
 
   return (
-    <div className="flex min-h-screen bg-slate-950 text-slate-100 font-sans">
-      {/* Sidebar */}
+    <div className="flex flex-col md:flex-row min-h-screen bg-slate-950 text-slate-100 font-sans overflow-x-hidden">
+      {/* Sidebar (Desktop & Mobile Drawer) */}
       <SideBar
         activeType={activeType}
         setActiveType={setActiveType}
@@ -114,10 +135,41 @@ export const DashBoard: React.FC = () => {
         tagsList={uniqueTags}
         openAskAi={() => setIsAskAiOpen(true)}
         counts={categoryCounts}
+        isMobileOpen={isMobileMenuOpen}
+        onCloseMobile={() => setIsMobileMenuOpen(false)}
       />
 
+      {/* Mobile Sticky Top Header Bar */}
+      <div className="md:hidden flex items-center justify-between px-4 py-3 bg-slate-900 border-b border-slate-800 sticky top-0 z-30 shadow-md">
+        <div className="flex items-center gap-2.5">
+          <button
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="p-2 rounded-xl text-slate-300 hover:text-white bg-slate-800/80 border border-slate-700/60"
+            title="Open navigation menu"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-white shrink-0">
+              <Brain className="w-4 h-4" />
+            </div>
+            <span className="font-bold text-sm bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+              SecondBrain
+            </span>
+          </div>
+        </div>
+
+        <button
+          onClick={() => setIsAskAiOpen(true)}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-600/20 border border-purple-500/40 text-purple-300 text-xs font-semibold"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+          <span>Ask AI</span>
+        </button>
+      </div>
+
       {/* Main Content Area */}
-      <main className="flex-1 p-6 md:p-8 max-w-7xl mx-auto w-full min-w-0">
+      <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-7xl mx-auto w-full min-w-0">
         <Header
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
@@ -188,6 +240,8 @@ export const DashBoard: React.FC = () => {
                 content={content}
                 onDelete={handleDelete}
                 onTagClick={(tag) => setSelectedTag(tag)}
+                onCardClick={(item) => setSelectedCardForModal(item)}
+                onToggleFavorite={handleToggleFavorite}
               />
             ))}
           </div>
@@ -236,6 +290,13 @@ export const DashBoard: React.FC = () => {
       )}
 
       {/* Modals & Drawers */}
+      <CardDetailModal
+        content={selectedCardForModal}
+        isOpen={!!selectedCardForModal}
+        onClose={() => setSelectedCardForModal(null)}
+        onDelete={handleDelete}
+        onTagClick={(tag) => setSelectedTag(tag)}
+      />
       <CreateContentModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}

@@ -8,6 +8,7 @@ export interface ContentItem {
   type: ContentType;
   tags: string[];
   userId: string;
+  isFavorite?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -34,8 +35,16 @@ export interface AskSource {
   score: number;
 }
 
+export interface ChatSessionItem {
+  _id: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ChatMessage {
   _id?: string;
+  sessionId?: string;
   sender: 'user' | 'ai';
   text: string;
   sources?: AskSource[];
@@ -45,6 +54,8 @@ export interface ChatMessage {
 
 export interface AskResponse {
   answer: string;
+  sessionId?: string;
+  sessionTitle?: string;
   sources: AskSource[];
   relevantCards?: ContentItem[];
   messages?: ChatMessage[];

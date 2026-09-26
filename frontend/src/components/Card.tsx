@@ -7,7 +7,8 @@ import {
   Copy, 
   Check, 
   Tag as TagIcon,
-  Calendar
+  Calendar,
+  Star
 } from 'lucide-react';
 import { YoutubeIcon, TwitterIcon } from './Icons';
 import type { ContentItem } from '../types';
@@ -17,6 +18,8 @@ interface CardProps {
   content: ContentItem;
   onDelete?: (id: string) => void;
   onTagClick?: (tag: string) => void;
+  onCardClick?: (content: ContentItem) => void;
+  onToggleFavorite?: (id: string) => void;
   isReadOnly?: boolean;
 }
 
@@ -24,6 +27,8 @@ export const Card: React.FC<CardProps> = ({
   content,
   onDelete,
   onTagClick,
+  onCardClick,
+  onToggleFavorite,
   isReadOnly = false,
 }) => {
   const [copied, setCopied] = useState(false);
@@ -47,7 +52,8 @@ export const Card: React.FC<CardProps> = ({
     return match && match[1] ? `https://www.youtube-nocookie.com/embed/${match[1]}` : null;
   };
 
-  const handleCopyLink = () => {
+  const handleCopyLink = (e: React.MouseEvent) => {
+    e.stopPropagation();
     const targetUrl = content.link || window.location.href;
     navigator.clipboard.writeText(targetUrl);
     setCopied(true);
@@ -63,13 +69,26 @@ export const Card: React.FC<CardProps> = ({
 
   const youtubeEmbed = content.link ? getYoutubeEmbedUrl(content.link) : null;
 
+  const handleCardTitleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onCardClick) onCardClick(content);
+  };
+
   return (
-    <div className="group relative bg-slate-900/90 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between transition-all duration-300 hover:border-slate-700 hover:shadow-xl hover:shadow-purple-950/20 backdrop-blur-sm">
+    <div 
+      onClick={() => onCardClick && onCardClick(content)}
+      className={`group relative bg-slate-900/90 border ${
+        content.isFavorite ? 'border-amber-500/50 shadow-amber-500/10' : 'border-slate-800'
+      } rounded-2xl p-5 flex flex-col justify-between transition-all duration-300 hover:border-purple-500/50 hover:shadow-xl hover:shadow-purple-950/20 backdrop-blur-sm cursor-pointer`}
+    >
       <div>
         {/* Card Header */}
         <div className="flex items-start justify-between gap-3 mb-3">
-          <div className="flex items-center gap-2.5 overflow-hidden">
-            <div className="p-2 rounded-xl bg-slate-800 border border-slate-700/60 shrink-0">
+          <div 
+            onClick={handleCardTitleClick}
+            className="flex items-center gap-2.5 overflow-hidden flex-1 cursor-pointer"
+          >
+            <div className="p-2 rounded-xl bg-slate-800 border border-slate-700/60 shrink-0 group-hover:scale-105 transition-transform">
               {getIcon()}
             </div>
             <h3 className="font-semibold text-slate-100 text-base line-clamp-1 group-hover:text-purple-300 transition-colors" title={content.title}>
@@ -77,13 +96,26 @@ export const Card: React.FC<CardProps> = ({
             </h3>
           </div>
 
-          <div className="flex items-center gap-1 shrink-0">
+          <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
+            {!isReadOnly && onToggleFavorite && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleFavorite(content._id);
+                }}
+                title={content.isFavorite ? 'Unpin favorite' : 'Pin to favorites'}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors"
+              >
+                <Star className={`w-4 h-4 ${content.isFavorite ? 'text-amber-400 fill-amber-400' : ''}`} />
+              </button>
+            )}
             {content.link && (
               <a
                 href={content.link}
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Open original link"
+                onClick={(e) => e.stopPropagation()}
                 className="p-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors"
               >
                 <ExternalLink className="w-4 h-4" />
@@ -98,7 +130,10 @@ export const Card: React.FC<CardProps> = ({
             </button>
             {!isReadOnly && onDelete && (
               <button
-                onClick={() => setShowConfirmDelete(true)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowConfirmDelete(true);
+                }}
                 title="Delete content"
                 className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
               >

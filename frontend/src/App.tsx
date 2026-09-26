@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ToastProvider } from './components/Toast';
+import { LandingPage } from './pages/LandingPage';
 import { DashBoard } from './pages/DashBoard';
 import { Signin } from './pages/Signin';
 import { Signup } from './pages/Signup';
@@ -38,7 +39,7 @@ const PublicOnlyRoute: React.FC<{ children: React.ReactNode }> = ({ children }) 
   }
 
   if (token) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/app" replace />;
   }
 
   return <>{children}</>;
@@ -50,8 +51,9 @@ function App() {
       <AuthProvider>
         <ToastProvider>
           <Routes>
+            <Route path="/" element={<LandingPage />} />
             <Route
-              path="/"
+              path="/app"
               element={
                 <ProtectedRoute>
                   <DashBoard />

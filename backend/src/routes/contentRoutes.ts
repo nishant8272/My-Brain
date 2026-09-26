@@ -1,0 +1,25 @@
+import { Router } from 'express';
+import { 
+  createContent, 
+  getContents, 
+  updateContent, 
+  toggleFavorite, 
+  deleteContent, 
+  batchDeleteContent, 
+  getContentStats 
+} from '../controllers/contentController.js';
+import { userMiddleware } from '../middleware/authMiddleware.js';
+
+const router = Router();
+
+router.use(userMiddleware);
+
+router.post('/', createContent);
+router.get('/', getContents);
+router.get('/stats', getContentStats);
+router.put('/:id', updateContent);
+router.patch('/:id/favorite', toggleFavorite);
+router.delete('/', deleteContent);
+router.post('/batch-delete', batchDeleteContent);
+
+export default router;

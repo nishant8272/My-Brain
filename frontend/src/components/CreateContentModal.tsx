@@ -113,7 +113,7 @@ export const CreateContentModal: React.FC<CreateContentModalProps> = ({
             <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
               Select Type
             </label>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {typeOptions.map((opt) => {
                 const Icon = opt.icon;
                 const isSelected = type === opt.id;
