@@ -38,19 +38,19 @@ export const SharedBrain: React.FC = () => {
   }, [hash]);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans flex flex-col">
+    <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-black dark:text-zinc-100 font-sans flex flex-col">
       {/* Public Header */}
-      <header className="border-b border-slate-800 bg-slate-900/60 backdrop-blur-md sticky top-0 z-30 px-4 sm:px-6 py-4">
+      <header className="border-b border-slate-200 bg-white/80 dark:border-zinc-800 dark:bg-zinc-950/80 backdrop-blur-md sticky top-0 z-30 px-4 sm:px-6 py-4">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-white shadow-lg shadow-purple-500/20 shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-slate-900 text-white border-slate-800 dark:bg-zinc-800 dark:border-zinc-700 dark:text-emerald-400 border flex items-center justify-center shadow-lg shrink-0">
               <Brain className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+              <h1 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 SecondBrain Public Share
               </h1>
-              <p className="text-xs text-purple-400 flex items-center gap-1 font-medium">
+              <p className="text-xs text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-medium">
                 <Globe className="w-3 h-3" />
                 <span>Shared by @{username || 'user'}</span>
               </p>
@@ -59,7 +59,7 @@ export const SharedBrain: React.FC = () => {
 
           <Link
             to="/signin"
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold shadow-md transition-all"
+            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-zinc-900 hover:bg-black text-white dark:bg-emerald-600 dark:hover:bg-emerald-500 text-xs font-semibold shadow-md transition-all"
           >
             <span>Create Your Own SecondBrain</span>
           </Link>
@@ -69,22 +69,22 @@ export const SharedBrain: React.FC = () => {
       {/* Main Content */}
       <main className="flex-1 max-w-7xl mx-auto w-full p-4 sm:p-6 md:p-8">
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-24 gap-3 text-slate-400">
-            <Loader2 className="w-8 h-8 text-purple-400 animate-spin" />
+          <div className="flex flex-col items-center justify-center py-24 gap-3 text-slate-500 dark:text-zinc-400">
+            <Loader2 className="w-8 h-8 text-emerald-500 dark:text-emerald-400 animate-spin" />
             <p className="text-sm font-medium">Loading shared brain collection...</p>
           </div>
         ) : error ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 mb-4">
+            <div className="w-16 h-16 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-500 mb-4">
               <Inbox className="w-8 h-8" />
             </div>
-            <h2 className="text-xl font-bold text-white mb-2">{error}</h2>
-            <p className="text-xs text-slate-400 max-w-sm mb-6">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{error}</h2>
+            <p className="text-xs text-slate-500 dark:text-zinc-400 max-w-sm mb-6">
               This link may have expired or been set to private by its owner.
             </p>
             <Link
               to="/"
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 dark:bg-zinc-900 dark:hover:bg-zinc-800 dark:text-zinc-200 text-xs font-semibold transition-colors border"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Go to Homepage</span>
@@ -92,12 +92,12 @@ export const SharedBrain: React.FC = () => {
           </div>
         ) : (
           <div>
-            <div className="mb-6 pb-4 border-b border-slate-800 flex items-center justify-between">
+            <div className="mb-6 pb-4 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between">
               <div>
-                <h2 className="text-lg sm:text-xl font-bold text-white">
+                <h2 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
                   @{username}'s Saved Cards ({contents.length})
                 </h2>
-                <p className="text-xs text-slate-400 mt-1">Browse notes, videos, tweets, and links</p>
+                <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">Browse notes, videos, tweets, and links</p>
               </div>
             </div>
 
@@ -113,7 +113,7 @@ export const SharedBrain: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <div className="py-16 text-center text-slate-400">
+              <div className="py-16 text-center text-slate-500 dark:text-zinc-400">
                 <p className="text-sm">No cards available in this shared brain.</p>
               </div>
             )}
@@ -128,7 +128,7 @@ export const SharedBrain: React.FC = () => {
         isReadOnly={true}
       />
 
-      <footer className="border-t border-slate-800/80 py-6 text-center text-xs text-slate-500">
+      <footer className="border-t border-slate-200 dark:border-zinc-800 py-6 text-center text-xs text-slate-500 dark:text-zinc-500">
         Powered by SecondBrain AI Knowledge Base
       </footer>
     </div>

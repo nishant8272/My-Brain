@@ -1,6 +1,6 @@
 import type { AuthResponse, ContentItem, AskResponse, SharedBrainResponse, ContentType, ChatMessage, ChatSessionItem } from '../types';
 
-const API_BASE_URL = 'http://localhost:3000/api/user' ;
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/user';
 
 const getHeaders = () => {
   const token = localStorage.getItem('token');

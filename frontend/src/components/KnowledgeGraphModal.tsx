@@ -76,8 +76,8 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
       case 'twitter': return '#38bdf8';  // Sky Blue
       case 'document': return '#fbbf24'; // Amber Gold
       case 'link': return '#34d399';     // Emerald Green
-      case 'tag': return '#c084fc';      // Neon Purple
-      default: return '#818cf8';         // Indigo
+      case 'tag': return '#10b981';      // Emerald Accent
+      default: return '#06b6d4';         // Cyan
     }
   };
 
@@ -113,7 +113,7 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
       const graph = (ForceGraph3D as any)({ controlType: 'orbit' })(container)
         .width(width)
         .height(height)
-        .backgroundColor('#020617') // Slate 950 deep space background
+        .backgroundColor('#000000') // Pitch Black background
         .showNavInfo(false)
         .nodeRelSize(7)
         .nodeVal((node: any) => (node.type === 'tag' ? 5 : 8))
@@ -187,13 +187,13 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
           return group;
         })
         .linkWidth(1.5)
-        .linkColor(() => 'rgba(148, 163, 184, 0.35)') // Slate 400 link translucent
+        .linkColor(() => 'rgba(161, 161, 170, 0.35)') // Silver translucent
         .linkDirectionalParticles(3)
         .linkDirectionalParticleWidth(2.5)
         .linkDirectionalParticleSpeed(0.006)
         .linkDirectionalParticleColor((link: any) => {
           const targetNode = typeof link.target === 'object' ? link.target : null;
-          return targetNode ? getNodeColorHex(targetNode.type) : '#c084fc';
+          return targetNode ? getNodeColorHex(targetNode.type) : '#10b981';
         })
         .onNodeClick((node: any) => {
           setSelectedNode(node);
@@ -210,7 +210,7 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
 
       // Ambient & Directional Lighting for 3D Shading
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
-      const directionalLight = new THREE.DirectionalLight(0xa855f7, 1.2);
+      const directionalLight = new THREE.DirectionalLight(0x10b981, 1.2);
       directionalLight.position.set(100, 100, 100);
       graph.scene().add(ambientLight);
       graph.scene().add(directionalLight);
@@ -252,7 +252,6 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
       }
     };
 
-    // Immediate and delayed resize check to ensure parent container dimensions are populated
     handleResize();
     const timer = setTimeout(handleResize, 150);
 
@@ -266,23 +265,23 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/85 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-6xl h-[88vh] bg-slate-900 border border-slate-800/90 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md animate-fade-in">
+      <div className="relative w-full max-w-6xl h-[88vh] bg-white border-slate-200 dark:bg-zinc-950 dark:border-zinc-800 border rounded-2xl shadow-2xl overflow-hidden flex flex-col">
         
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800/80 bg-slate-950/70 shrink-0">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-white dark:border-zinc-800 dark:bg-zinc-950 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30">
+            <div className="p-2.5 rounded-xl bg-slate-100 text-slate-800 border-slate-200 dark:bg-zinc-900 dark:border-zinc-800 dark:text-emerald-400 border">
               <Network className="w-5 h-5 animate-pulse" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white flex items-center gap-2">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <span>3D Knowledge Graph Mind Map</span>
-                <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-purple-950/80 text-purple-300 border border-purple-800/60">
+                <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border-slate-200 dark:bg-zinc-900 dark:text-zinc-400 dark:border-zinc-800 border">
                   {nodes.length} Nodes &bull; {edges.length} Links
                 </span>
               </h2>
-              <p className="text-xs text-slate-400">Interactive 3D WebGL network visualization with particle flows</p>
+              <p className="text-xs text-slate-500 dark:text-zinc-400">Interactive 3D WebGL network visualization with particle flows</p>
             </div>
           </div>
 
@@ -293,14 +292,14 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
                   graphInstanceRef.current.cameraPosition({ x: 0, y: 0, z: 300 }, { x: 0, y: 0, z: 0 }, 1000);
                 }
               }}
-              className="p-2 rounded-xl text-slate-400 hover:text-white bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 transition-colors"
+              className="p-2 rounded-xl text-slate-600 bg-slate-100 hover:bg-slate-200 dark:text-zinc-400 dark:hover:text-white dark:bg-zinc-900 dark:hover:bg-zinc-800 border transition-colors"
               title="Reset 3D Camera View"
             >
               <RotateCw className="w-4 h-4" />
             </button>
             <button
               onClick={onClose}
-              className="p-2 rounded-xl text-slate-400 hover:text-white bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 transition-colors"
+              className="p-2 rounded-xl text-slate-600 bg-slate-100 hover:bg-slate-200 dark:text-zinc-400 dark:hover:text-white dark:bg-zinc-900 dark:hover:bg-zinc-800 border transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -308,32 +307,32 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
         </div>
 
         {/* Toolbar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-2.5 bg-slate-950/40 border-b border-slate-800/80 text-xs shrink-0">
+        <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-2.5 bg-slate-50 border-slate-200 dark:bg-black dark:border-zinc-800 border-b text-xs shrink-0">
           {/* Search Node Bar */}
           <div className="relative flex-1 min-w-[180px] max-w-xs">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-3.5 h-3.5 text-slate-400 dark:text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search 3D nodes..."
-              className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-purple-500 transition-all"
+              className="w-full bg-white border-slate-200 text-slate-900 dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-100 border rounded-xl pl-8 pr-3 py-1.5 text-xs focus:outline-none transition-all"
             />
           </div>
 
           {/* Filter Type Pills */}
           <div className="flex items-center gap-1.5 overflow-x-auto custom-scrollbar pb-1 sm:pb-0">
-            <span className="text-slate-500 font-medium flex items-center gap-1 mr-1">
+            <span className="text-slate-400 dark:text-zinc-500 font-medium flex items-center gap-1 mr-1">
               <Filter className="w-3.5 h-3.5" /> Filter:
             </span>
             {['all', 'document', 'youtube', 'twitter', 'link', 'tag'].map((type) => (
               <button
                 key={type}
                 onClick={() => setFilterType(type)}
-                className={`px-2.5 py-1 rounded-lg capitalize font-medium transition-all ${
+                className={`px-2.5 py-1 rounded-lg capitalize font-medium transition-all border ${
                   filterType === type
-                    ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-600/20'
-                    : 'bg-slate-800/60 border border-slate-700/50 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                    ? 'bg-slate-900 text-white dark:bg-emerald-600 dark:text-white shadow-md'
+                    : 'bg-white border-slate-200 text-slate-600 dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-400'
                 }`}
               >
                 {type}
@@ -346,11 +345,11 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
             onClick={() => setIsAutoRotating(!isAutoRotating)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-medium border text-xs transition-all ${
               isAutoRotating
-                ? 'bg-purple-950/60 border-purple-500/40 text-purple-300'
-                : 'bg-slate-800/60 border-slate-700/50 text-slate-400 hover:text-slate-200'
+                ? 'bg-slate-200 border-slate-300 text-slate-800 dark:bg-emerald-500/20 dark:border-emerald-500/40 dark:text-emerald-300'
+                : 'bg-white border-slate-200 text-slate-600 dark:bg-zinc-900 dark:border-zinc-800 dark:text-zinc-400'
             }`}
           >
-            {isAutoRotating ? <Pause className="w-3.5 h-3.5 text-purple-400" /> : <Play className="w-3.5 h-3.5" />}
+            {isAutoRotating ? <Pause className="w-3.5 h-3.5 text-emerald-500 dark:text-emerald-400" /> : <Play className="w-3.5 h-3.5" />}
             <span>{isAutoRotating ? '3D Auto-Rotate: ON' : '3D Auto-Rotate: OFF'}</span>
           </button>
         </div>
@@ -360,51 +359,51 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
           {/* WebGL 3D Canvas Container */}
           <div 
             ref={graphContainerRef}
-            className="flex-1 bg-slate-950 relative overflow-hidden"
+            className="flex-1 bg-black relative overflow-hidden"
           >
             {loading && (
-              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-slate-950/90 text-slate-400 gap-3">
-                <Sparkles className="w-8 h-8 animate-spin text-purple-400" />
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/90 text-zinc-400 gap-3">
+                <Sparkles className="w-8 h-8 animate-spin text-emerald-400" />
                 <span className="text-sm font-semibold">Initializing 3D WebGL Graph Environment...</span>
               </div>
             )}
 
             {!loading && nodes.length === 0 && (
-              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-slate-500">
-                <Network className="w-12 h-12 mb-3 opacity-30 text-purple-400" />
-                <p className="text-sm font-semibold text-slate-300">No knowledge nodes found</p>
-                <p className="text-xs text-slate-500 mt-1">Save cards or tags to build your 3D knowledge universe.</p>
+              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-zinc-500">
+                <Network className="w-12 h-12 mb-3 opacity-30 text-emerald-400" />
+                <p className="text-sm font-semibold text-zinc-300">No knowledge nodes found</p>
+                <p className="text-xs text-zinc-500 mt-1">Save cards or tags to build your 3D knowledge universe.</p>
               </div>
             )}
           </div>
 
           {/* Side Inspector Panel */}
           {selectedNode && (
-            <div className="w-80 bg-slate-900/95 border-l border-slate-800 p-5 overflow-y-auto flex flex-col justify-between backdrop-blur-md animate-slide-in shrink-0">
+            <div className="w-80 bg-white border-slate-200 dark:bg-zinc-950 dark:border-zinc-800 border-l p-5 overflow-y-auto flex flex-col justify-between backdrop-blur-md animate-slide-in shrink-0">
               <div>
-                <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-800">
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center gap-1.5">
-                    <Eye className="w-3 h-3 text-purple-400" />
+                <div className="flex items-center justify-between pb-3 mb-4 border-b border-slate-200 dark:border-zinc-800">
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-slate-100 text-slate-800 border-slate-200 dark:bg-zinc-900 dark:text-emerald-400 dark:border-zinc-800 border flex items-center gap-1.5">
+                    <Eye className="w-3 h-3 text-emerald-500 dark:text-emerald-400" />
                     {selectedNode.type} Node
                   </span>
                   <button
                     onClick={() => setSelectedNode(null)}
-                    className="text-slate-500 hover:text-slate-300 p-1"
+                    className="text-slate-400 hover:text-slate-700 dark:text-zinc-500 dark:hover:text-zinc-300 p-1"
                   >
                     <X className="w-4 h-4" />
                   </button>
                 </div>
 
-                <h3 className="text-base font-bold text-white mb-2 break-words leading-snug">
+                <h3 className="text-base font-bold text-slate-900 dark:text-white mb-2 break-words leading-snug">
                   {selectedNode.label}
                 </h3>
 
                 {selectedNode.details?.textSnippet && (
                   <div className="mb-4">
-                    <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block mb-1">
+                    <span className="text-[11px] font-semibold text-slate-400 dark:text-zinc-500 uppercase tracking-wider block mb-1">
                       Content Snippet
                     </span>
-                    <p className="text-xs text-slate-300 bg-slate-950/80 p-3 rounded-xl border border-slate-800 leading-relaxed font-sans">
+                    <p className="text-xs text-slate-700 bg-slate-50 border-slate-200 dark:text-zinc-300 dark:bg-black dark:border-zinc-800 p-3 rounded-xl border leading-relaxed font-sans">
                       &quot;{selectedNode.details.textSnippet}...&quot;
                     </p>
                   </div>
@@ -415,7 +414,7 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
                     href={selectedNode.details.link}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs text-purple-400 hover:text-purple-300 font-medium mb-4 hover:underline"
+                    className="inline-flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 font-medium mb-4 hover:underline"
                   >
                     <span>Open Web Source</span>
                     <ExternalLink className="w-3.5 h-3.5" />
@@ -424,12 +423,12 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
 
                 {selectedNode.details?.tags && selectedNode.details.tags.length > 0 && (
                   <div className="mb-4">
-                    <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block mb-1.5">
+                    <span className="text-[11px] font-semibold text-slate-400 dark:text-zinc-500 uppercase tracking-wider block mb-1.5">
                       Connected Tags
                     </span>
                     <div className="flex flex-wrap gap-1.5">
                       {selectedNode.details.tags.map((t: string) => (
-                        <span key={t} className="text-xs px-2.5 py-1 rounded-lg bg-purple-500/20 text-purple-300 border border-purple-500/30 flex items-center gap-1">
+                        <span key={t} className="text-xs px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 border-slate-200 dark:bg-zinc-900 dark:text-zinc-300 dark:border-zinc-800 border flex items-center gap-1">
                           <Tag className="w-3 h-3" /> #{t}
                         </span>
                       ))}
@@ -444,7 +443,7 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
                     onSelectTag(selectedNode.label.replace(/^#/, ''));
                     onClose();
                   }}
-                  className="w-full py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold text-xs rounded-xl shadow-lg shadow-purple-600/20 transition-all active:scale-95"
+                  className="w-full py-2.5 bg-zinc-900 hover:bg-black text-white dark:bg-emerald-600 dark:hover:bg-emerald-500 font-semibold text-xs rounded-xl shadow-lg transition-all active:scale-95"
                 >
                   Filter Dashboard by #{selectedNode.label.replace(/^#/, '')}
                 </button>
@@ -454,7 +453,7 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-6 py-2 border-t border-slate-800 bg-slate-950/80 text-[11px] text-slate-500 shrink-0">
+        <div className="flex items-center justify-between px-6 py-2 border-t border-slate-200 bg-slate-50 dark:border-zinc-800 dark:bg-black text-[11px] text-slate-500 dark:text-zinc-500 shrink-0">
           <div className="flex items-center gap-4">
             <span>🖱️ Left-click & Drag: Rotate 3D Space</span>
             <span>Right-click & Drag: Pan</span>
@@ -466,3 +465,5 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
     </div>
   );
 };
+
+export default KnowledgeGraphModal;

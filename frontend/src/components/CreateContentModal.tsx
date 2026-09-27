@@ -118,22 +118,22 @@ export const CreateContentModal: React.FC<CreateContentModalProps> = ({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-lg bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-6 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+      <div className="relative w-full max-w-lg bg-white border-slate-200 text-slate-900 dark:bg-zinc-950 dark:border-zinc-800 dark:text-zinc-100 border rounded-2xl shadow-2xl p-6 overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-800">
+        <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-200 dark:border-zinc-800">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-purple-500/20 text-purple-400">
+            <div className="p-2 rounded-xl bg-slate-100 text-slate-800 border border-slate-200 dark:bg-zinc-900 dark:border-zinc-800 dark:text-emerald-400">
               <Plus className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">Add Knowledge Card</h2>
-              <p className="text-xs text-slate-400">Content will be indexed for AI search & chat</p>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Add Knowledge Card</h2>
+              <p className="text-xs text-slate-500 dark:text-zinc-400">Content will be indexed for AI search & chat</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-zinc-800 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -142,7 +142,7 @@ export const CreateContentModal: React.FC<CreateContentModalProps> = ({
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {/* Content Type Selector */}
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-2">
               Select Type
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -156,8 +156,8 @@ export const CreateContentModal: React.FC<CreateContentModalProps> = ({
                     onClick={() => setType(opt.id)}
                     className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border text-xs font-medium transition-all ${
                       isSelected
-                        ? 'bg-purple-600/20 border-purple-500 text-purple-200 shadow-md shadow-purple-500/10'
-                        : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-300'
+                        ? 'bg-slate-900 text-white border-slate-900 dark:bg-emerald-500/20 dark:border-emerald-500/60 dark:text-emerald-300 shadow-md'
+                        : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100 dark:bg-zinc-900/60 dark:border-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-900'
                     }`}
                   >
                     <Icon className={`w-4 h-4 ${opt.color}`} />
@@ -170,7 +170,7 @@ export const CreateContentModal: React.FC<CreateContentModalProps> = ({
 
           {/* Title */}
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-1.5">
               Title
             </label>
             <input
@@ -178,7 +178,7 @@ export const CreateContentModal: React.FC<CreateContentModalProps> = ({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. React 19 Tutorial or My Project Ideas"
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
+              className="w-full bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-400 focus:border-slate-400 dark:bg-black dark:border-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-emerald-500 border rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-all"
             />
           </div>
 
@@ -186,23 +186,23 @@ export const CreateContentModal: React.FC<CreateContentModalProps> = ({
           {(type === 'youtube' || type === 'twitter' || type === 'link') && (
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                <label className="text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider">
                   URL / Link
                 </label>
                 <button
                   type="button"
                   onClick={handleAutoEnrich}
                   disabled={isEnriching || (!link.trim() && !text.trim())}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-purple-400 hover:text-purple-300 disabled:opacity-40 transition-colors"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 disabled:opacity-40 transition-colors"
                 >
                   {isEnriching ? (
                     <>
-                      <Loader2 className="w-3.5 h-3.5 animate-spin text-purple-400" />
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-500" />
                       <span>Scraping & Summarizing...</span>
                     </>
                   ) : (
                     <>
-                      <Wand2 className="w-3.5 h-3.5 text-purple-400" />
+                      <Wand2 className="w-3.5 h-3.5 text-emerald-500" />
                       <span>Auto-Enrich with AI</span>
                     </>
                   )}
@@ -219,14 +219,14 @@ export const CreateContentModal: React.FC<CreateContentModalProps> = ({
                     ? 'https://x.com/username/status/...'
                     : 'https://example.com'
                 }
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                className="w-full bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-400 focus:border-slate-400 dark:bg-black dark:border-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-emerald-500 border rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-all"
               />
             </div>
           )}
 
           {/* Text / Notes */}
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-1.5">
               Description / Notes Content
             </label>
             <textarea
@@ -234,13 +234,13 @@ export const CreateContentModal: React.FC<CreateContentModalProps> = ({
               onChange={(e) => setText(e.target.value)}
               rows={4}
               placeholder="Write your notes, key takeaways, or summary here..."
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all resize-none"
+              className="w-full bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-400 focus:border-slate-400 dark:bg-black dark:border-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-emerald-500 border rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-all resize-none"
             />
           </div>
 
           {/* Tags */}
           <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-1.5">
               Tags
             </label>
             <div className="flex items-center gap-2 mb-2">
@@ -250,12 +250,12 @@ export const CreateContentModal: React.FC<CreateContentModalProps> = ({
                 onChange={(e) => setTagInput(e.target.value)}
                 onKeyDown={handleKeyDownTag}
                 placeholder="Type tag and press Enter..."
-                className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 transition-all"
+                className="flex-1 bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-400 dark:bg-black dark:border-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500 border rounded-xl px-3.5 py-2 text-xs focus:outline-none transition-all"
               />
               <button
                 type="button"
                 onClick={handleAddTag}
-                className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium rounded-xl transition-colors"
+                className="px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-zinc-200 text-xs font-medium rounded-xl transition-colors"
               >
                 Add Tag
               </button>
@@ -266,7 +266,7 @@ export const CreateContentModal: React.FC<CreateContentModalProps> = ({
                 {tags.map((t) => (
                   <span
                     key={t}
-                    className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg bg-purple-500/20 text-purple-300 border border-purple-500/30"
+                    className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-lg bg-slate-200 text-slate-800 border-slate-300 dark:bg-zinc-800 dark:text-zinc-200 dark:border-zinc-700 border"
                   >
                     #{t}
                     <button
@@ -283,18 +283,18 @@ export const CreateContentModal: React.FC<CreateContentModalProps> = ({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800 mt-2">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200 dark:border-zinc-800 mt-2">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white bg-slate-800/80 hover:bg-slate-800 rounded-xl transition-colors"
+              className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 dark:text-zinc-400 dark:hover:text-white dark:bg-zinc-900 dark:hover:bg-zinc-800 rounded-xl transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-xl shadow-lg shadow-purple-600/20 transition-all disabled:opacity-50"
+              className="flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-zinc-900 hover:bg-black dark:bg-emerald-600 dark:hover:bg-emerald-500 rounded-xl shadow-lg transition-all disabled:opacity-50"
             >
               {loading ? (
                 <>
