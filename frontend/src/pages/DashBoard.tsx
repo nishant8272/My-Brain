@@ -143,7 +143,7 @@ export const DashBoard: React.FC = () => {
   }, [contents, activeType, selectedTag, searchQuery]);
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-slate-50 text-slate-900 dark:bg-black dark:text-zinc-100 font-sans overflow-x-hidden">
+    <div className="flex flex-col md:flex-row h-screen h-[100dvh] bg-slate-50 text-slate-900 dark:bg-black dark:text-zinc-100 font-sans overflow-hidden">
       {/* Sidebar (Desktop & Mobile Drawer) */}
       <SideBar
         activeType={activeType}
@@ -157,145 +157,155 @@ export const DashBoard: React.FC = () => {
         onCloseMobile={() => setIsMobileMenuOpen(false)}
       />
 
-      {/* Mobile Sticky Top Header Bar */}
-      <div className="md:hidden flex items-center justify-between px-4 py-3 bg-white border-slate-200 dark:bg-zinc-950 dark:border-zinc-800 border-b sticky top-0 z-30 shadow-md">
-        <div className="flex items-center gap-2.5">
-          <button
-            onClick={() => setIsMobileMenuOpen(true)}
-            className="p-2 rounded-xl text-slate-700 bg-slate-100 border-slate-200 dark:text-zinc-300 dark:hover:text-white dark:bg-zinc-900 dark:border-zinc-800 border"
-            title="Open navigation menu"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-slate-900 text-white dark:bg-zinc-800 dark:text-emerald-400 flex items-center justify-center shrink-0">
-              <Brain className="w-4 h-4" />
+      {/* Right Column Layout */}
+      <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden">
+        {/* Mobile Sticky Top Header Bar */}
+        <div className="md:hidden shrink-0 flex items-center justify-between px-4 py-3 bg-white border-slate-200 dark:bg-zinc-950 dark:border-zinc-800 border-b z-30 shadow-sm">
+          <div className="flex items-center gap-2.5">
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="p-2 rounded-xl text-slate-700 bg-slate-100 border-slate-200 dark:text-zinc-300 dark:hover:text-white dark:bg-zinc-900 dark:border-zinc-800 border"
+              title="Open navigation menu"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-slate-900 text-white dark:bg-zinc-800 dark:text-emerald-400 flex items-center justify-center shrink-0">
+                <Brain className="w-4 h-4" />
+              </div>
+              <span className="font-bold text-sm text-slate-900 dark:text-white">
+                SecondBrain
+              </span>
             </div>
-            <span className="font-bold text-sm text-slate-900 dark:text-white">
-              SecondBrain
-            </span>
           </div>
+
+          <button
+            onClick={() => setIsAskAiOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border-emerald-200 text-emerald-800 dark:bg-zinc-900 dark:border-emerald-500/40 dark:text-emerald-300 border text-xs font-semibold"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span>Ask AI</span>
+          </button>
         </div>
 
-        <button
-          onClick={() => setIsAskAiOpen(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border-emerald-200 text-emerald-800 dark:bg-zinc-900 dark:border-emerald-500/40 dark:text-emerald-300 border text-xs font-semibold"
-        >
-          <Sparkles className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-          <span>Ask AI</span>
-        </button>
-      </div>
+        {/* Sticky Header / Navbar */}
+        <header className="shrink-0 z-20 bg-slate-50/95 dark:bg-black/95 backdrop-blur-md border-b border-slate-200 dark:border-zinc-800 px-4 sm:px-6 md:px-8 py-3.5 sm:py-4">
+          <div className="max-w-7xl mx-auto w-full">
+            <Header
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              openAddModal={() => setIsAddModalOpen(true)}
+              openShareModal={() => setIsShareModalOpen(true)}
+              openAskAi={() => setIsAskAiOpen(true)}
+              openCommandPalette={() => setIsCommandPaletteOpen(true)}
+              openGraphModal={() => setIsGraphModalOpen(true)}
+              totalItems={filteredContents.length}
+              activeType={activeType}
+            />
 
-      {/* Main Content Area */}
-      <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-7xl mx-auto w-full min-w-0">
-        <Header
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          openAddModal={() => setIsAddModalOpen(true)}
-          openShareModal={() => setIsShareModalOpen(true)}
-          openAskAi={() => setIsAskAiOpen(true)}
-          openCommandPalette={() => setIsCommandPaletteOpen(true)}
-          openGraphModal={() => setIsGraphModalOpen(true)}
-          totalItems={filteredContents.length}
-          activeType={activeType}
-        />
-
-        {/* Active Filters Bar */}
-        {(selectedTag || searchQuery) && (
-          <div className="flex items-center gap-2 mb-6 p-3 rounded-xl bg-white border-slate-200 dark:bg-zinc-900/90 dark:border-zinc-800 border text-xs shadow-sm">
-            <Filter className="w-4 h-4 text-emerald-500 dark:text-emerald-400 shrink-0" />
-            <span className="text-slate-500 dark:text-zinc-400 font-medium">Active Filters:</span>
-            {selectedTag && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-900 text-white border-slate-800 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/30 border font-medium">
-                <Tag className="w-3 h-3" />
-                <span>#{selectedTag}</span>
-                <button onClick={() => setSelectedTag(null)} className="hover:opacity-75 font-bold ml-1 cursor-pointer">
-                  ×
+            {/* Active Filters Bar */}
+            {(selectedTag || searchQuery) && (
+              <div className="flex items-center gap-2 mt-3.5 p-2.5 rounded-xl bg-white border-slate-200 dark:bg-zinc-900/90 dark:border-zinc-800 border text-xs shadow-sm">
+                <Filter className="w-4 h-4 text-emerald-500 dark:text-emerald-400 shrink-0" />
+                <span className="text-slate-500 dark:text-zinc-400 font-medium">Active Filters:</span>
+                {selectedTag && (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-900 text-white border-slate-800 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/30 border font-medium">
+                    <Tag className="w-3 h-3" />
+                    <span>#{selectedTag}</span>
+                    <button onClick={() => setSelectedTag(null)} className="hover:opacity-75 font-bold ml-1 cursor-pointer">
+                      ×
+                    </button>
+                  </span>
+                )}
+                {searchQuery && (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-200 text-slate-800 border-slate-300 dark:bg-zinc-800 dark:text-zinc-200 dark:border-zinc-700 border font-medium">
+                    <span>"{searchQuery}"</span>
+                    <button onClick={() => setSearchQuery('')} className="hover:opacity-75 font-bold ml-1 cursor-pointer">
+                      ×
+                    </button>
+                  </span>
+                )}
+                <button
+                  onClick={() => {
+                    setSelectedTag(null);
+                    setSearchQuery('');
+                  }}
+                  className="text-slate-500 hover:text-slate-700 dark:text-zinc-400 dark:hover:text-zinc-200 ml-auto font-medium cursor-pointer"
+                >
+                  Clear all
                 </button>
-              </span>
-            )}
-            {searchQuery && (
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-200 text-slate-800 border-slate-300 dark:bg-zinc-800 dark:text-zinc-200 dark:border-zinc-700 border font-medium">
-                <span>"{searchQuery}"</span>
-                <button onClick={() => setSearchQuery('')} className="hover:opacity-75 font-bold ml-1 cursor-pointer">
-                  ×
-                </button>
-              </span>
-            )}
-            <button
-              onClick={() => {
-                setSelectedTag(null);
-                setSearchQuery('');
-              }}
-              className="text-slate-500 hover:text-slate-700 dark:text-zinc-400 dark:hover:text-zinc-200 ml-auto font-medium cursor-pointer"
-            >
-              Clear all
-            </button>
-          </div>
-        )}
-
-        {/* Loading Skeletons */}
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div
-                key={i}
-                className="h-56 bg-white border-slate-200 dark:bg-zinc-900/80 dark:border-zinc-800 border rounded-2xl animate-pulse p-5 flex flex-col justify-between shadow-sm"
-              >
-                <div className="space-y-3">
-                  <div className="h-5 bg-slate-200 dark:bg-zinc-800 rounded-lg w-3/4" />
-                  <div className="h-4 bg-slate-100 dark:bg-zinc-800/60 rounded-lg w-full" />
-                  <div className="h-4 bg-slate-100 dark:bg-zinc-800/60 rounded-lg w-2/3" />
-                </div>
-                <div className="h-4 bg-slate-200 dark:bg-zinc-800/40 rounded-lg w-1/3" />
               </div>
-            ))}
+            )}
           </div>
-        ) : filteredContents.length > 0 ? (
-          /* Cards Grid */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredContents.map((content) => (
-              <Card
-                key={content._id}
-                content={content}
-                onDelete={handleDelete}
-                onTagClick={(tag) => setSelectedTag(tag)}
-                onCardClick={(item) => setSelectedCardForModal(item)}
-                onToggleFavorite={handleToggleFavorite}
-              />
-            ))}
+        </header>
+
+        {/* Scrollable Card Area - Only this area scrolls */}
+        <main className="flex-1 overflow-y-auto custom-scrollbar px-4 sm:px-6 md:px-8 py-6 w-full">
+          <div className="max-w-7xl mx-auto w-full pb-20">
+            {/* Loading Skeletons */}
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div
+                    key={i}
+                    className="h-56 bg-white border-slate-200 dark:bg-zinc-900/80 dark:border-zinc-800 border rounded-2xl animate-pulse p-5 flex flex-col justify-between shadow-sm"
+                  >
+                    <div className="space-y-3">
+                      <div className="h-5 bg-slate-200 dark:bg-zinc-800 rounded-lg w-3/4" />
+                      <div className="h-4 bg-slate-100 dark:bg-zinc-800/60 rounded-lg w-full" />
+                      <div className="h-4 bg-slate-100 dark:bg-zinc-800/60 rounded-lg w-2/3" />
+                    </div>
+                    <div className="h-4 bg-slate-200 dark:bg-zinc-800/40 rounded-lg w-1/3" />
+                  </div>
+                ))}
+              </div>
+            ) : filteredContents.length > 0 ? (
+              /* Cards Grid */
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredContents.map((content) => (
+                  <Card
+                    key={content._id}
+                    content={content}
+                    onDelete={handleDelete}
+                    onTagClick={(tag) => setSelectedTag(tag)}
+                    onCardClick={(item) => setSelectedCardForModal(item)}
+                    onToggleFavorite={handleToggleFavorite}
+                  />
+                ))}
+              </div>
+            ) : (
+              /* Empty State */
+              <div className="flex flex-col items-center justify-center py-20 text-center rounded-2xl border border-dashed bg-white border-slate-300 dark:bg-zinc-950/60 dark:border-zinc-800 shadow-sm">
+                <div className="w-16 h-16 rounded-2xl bg-slate-100 border-slate-200 dark:bg-zinc-900 dark:border-zinc-800 border flex items-center justify-center text-emerald-500 dark:text-emerald-400 mb-4">
+                  <Inbox className="w-8 h-8" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">No content found</h3>
+                <p className="text-xs text-slate-500 dark:text-zinc-400 max-w-sm mb-6">
+                  {searchQuery || selectedTag
+                    ? 'Try adjusting your search query or filters to find what you are looking for.'
+                    : 'Start building your Second Brain by adding YouTube videos, tweets, web links, or text notes.'}
+                </p>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setIsAddModalOpen(true)}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-black dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-xs font-semibold shadow-lg shadow-slate-900/20 dark:shadow-emerald-600/20 transition-all cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Content Now</span>
+                  </button>
+                  <button
+                    onClick={() => setIsAskAiOpen(true)}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-zinc-900 dark:hover:bg-zinc-800 dark:border-zinc-800 dark:text-zinc-200 border text-xs font-semibold transition-colors cursor-pointer"
+                  >
+                    <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                    <span>Ask AI Assistant</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-        ) : (
-          /* Empty State */
-          <div className="flex flex-col items-center justify-center py-20 text-center rounded-2xl border border-dashed bg-white border-slate-300 dark:bg-zinc-950/60 dark:border-zinc-800 shadow-sm">
-            <div className="w-16 h-16 rounded-2xl bg-slate-100 border-slate-200 dark:bg-zinc-900 dark:border-zinc-800 border flex items-center justify-center text-emerald-500 dark:text-emerald-400 mb-4">
-              <Inbox className="w-8 h-8" />
-            </div>
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">No content found</h3>
-            <p className="text-xs text-slate-500 dark:text-zinc-400 max-w-sm mb-6">
-              {searchQuery || selectedTag
-                ? 'Try adjusting your search query or filters to find what you are looking for.'
-                : 'Start building your Second Brain by adding YouTube videos, tweets, web links, or text notes.'}
-            </p>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setIsAddModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-black dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-xs font-semibold shadow-lg shadow-slate-900/20 dark:shadow-emerald-600/20 transition-all cursor-pointer"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Add Content Now</span>
-              </button>
-              <button
-                onClick={() => setIsAskAiOpen(true)}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 dark:bg-zinc-900 dark:hover:bg-zinc-800 dark:border-zinc-800 dark:text-zinc-200 border text-xs font-semibold transition-colors cursor-pointer"
-              >
-                <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                <span>Ask AI Assistant</span>
-              </button>
-            </div>
-          </div>
-        )}
-      </main>
+        </main>
+      </div>
 
       {/* Floating Side Trigger Button */}
       {!isAskAiOpen && (

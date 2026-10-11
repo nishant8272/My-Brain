@@ -33,6 +33,10 @@
 
 @layer utilities {
   /* Custom scrollbar */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(161, 161, 170, 0.3) transparent;
+  }
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
     height: 6px;

@@ -59,9 +59,9 @@ export const SideBar: React.FC<SideBarProps> = ({
 
   const sidebarContent = (
     <div className="flex flex-col justify-between h-full p-4 select-none">
-      <div className="flex flex-col gap-5 overflow-y-auto custom-scrollbar pr-1">
+      <div className="flex-1 flex flex-col gap-4 overflow-y-auto custom-scrollbar pr-1 min-h-0">
         {/* Logo */}
-        <div className="flex items-center justify-between px-1 py-1">
+        <div className="flex items-center justify-between px-1 py-1 shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-slate-900 text-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-emerald-400 border flex items-center justify-center shadow-lg shrink-0">
               <Brain className="w-6 h-6" />
@@ -89,23 +89,23 @@ export const SideBar: React.FC<SideBarProps> = ({
             openAskAi();
             if (onCloseMobile) onCloseMobile();
           }}
-          className="group relative w-full overflow-hidden rounded-xl bg-emerald-50 border-emerald-200 dark:bg-zinc-900/90 dark:border-zinc-800 dark:hover:border-emerald-500/50 p-3 border text-left transition-all duration-300 shadow-sm cursor-pointer"
+          className="group relative w-full overflow-hidden rounded-xl bg-emerald-50 border-emerald-200 dark:bg-zinc-900/90 dark:border-zinc-800 dark:hover:border-emerald-500/50 p-3 border text-left transition-all duration-300 shadow-sm cursor-pointer shrink-0"
         >
           <div className="flex items-center justify-between relative z-10">
             <div className="flex items-center gap-2.5">
               <div className="p-1.5 rounded-lg bg-emerald-200 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-400 group-hover:scale-110 transition-transform shrink-0">
                 <Sparkles className="w-4 h-4 text-emerald-700 dark:text-emerald-400 animate-pulse" />
               </div>
-              <div>
+              <div className="min-w-0">
                 <span className="text-xs font-semibold text-slate-900 dark:text-zinc-100 block">Ask AI Assistant</span>
-                <span className="text-[10px] text-slate-600 dark:text-zinc-400">Query your saved knowledge</span>
+                <span className="text-[10px] text-slate-600 dark:text-zinc-400 block truncate">Query your saved knowledge</span>
               </div>
             </div>
           </div>
         </button>
 
         {/* Navigation Categories */}
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 shrink-0">
           <span className="text-[11px] font-semibold text-slate-400 dark:text-zinc-500 px-3 uppercase tracking-wider mb-1">
             Categories
           </span>
@@ -141,7 +141,7 @@ export const SideBar: React.FC<SideBarProps> = ({
 
         {/* Tag Filters */}
         {tagsList.length > 0 && (
-          <div className="flex flex-col gap-1 pt-2 border-t border-slate-200 dark:border-zinc-800/80">
+          <div className="flex flex-col gap-1 pt-2 border-t border-slate-200 dark:border-zinc-800/80 shrink-0">
             <span className="text-[11px] font-semibold text-slate-400 dark:text-zinc-500 px-3 uppercase tracking-wider mb-1">
               Tags
             </span>
@@ -193,7 +193,7 @@ export const SideBar: React.FC<SideBarProps> = ({
   return (
     <>
       {/* Desktop Permanent Sidebar */}
-      <aside className="hidden md:flex w-64 bg-white border-slate-200 dark:bg-zinc-950 dark:border-zinc-800/80 border-r h-screen sticky top-0 flex-col shrink-0 z-20">
+      <aside className="hidden md:flex w-64 bg-white border-slate-200 dark:bg-zinc-950 dark:border-zinc-800/80 border-r h-full flex-col shrink-0 z-20">
         {sidebarContent}
       </aside>
 

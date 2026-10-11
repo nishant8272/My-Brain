@@ -38,7 +38,7 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="flex flex-col gap-4 pb-5 mb-6 border-b border-slate-200 dark:border-zinc-800/80 w-full min-w-0">
+    <div className="flex flex-col gap-3.5 w-full min-w-0">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white flex flex-wrap items-center gap-2">
@@ -72,18 +72,18 @@ export const Header: React.FC<HeaderProps> = ({
         </button>
       </div>
 
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 w-full">
+      <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3 w-full">
         {/* Search Bar / Command Palette Trigger */}
         <div 
           onClick={openCommandPalette}
-          className="relative flex-1 min-w-0 cursor-pointer"
+          className="relative flex-1 min-w-[240px] cursor-pointer"
         >
           <Search className="w-4 h-4 text-slate-400 dark:text-zinc-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search notes, links, tags... (Press Ctrl + K)"
+            placeholder="Search notes, links, tags..."
             className="w-full bg-white border-slate-200 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-emerald-500/20 dark:bg-zinc-900/90 dark:border-zinc-800 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:border-emerald-500/60 border rounded-xl pl-10 pr-20 py-2 text-xs sm:text-sm focus:outline-none transition-all cursor-text shadow-sm"
           />
           <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
@@ -93,7 +93,7 @@ export const Header: React.FC<HeaderProps> = ({
                   e.stopPropagation();
                   setSearchQuery('');
                 }}
-                className="text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 p-1"
+                className="text-slate-400 hover:text-slate-600 dark:text-zinc-500 dark:hover:text-zinc-300 p-1 cursor-pointer"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -106,7 +106,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 custom-scrollbar shrink-0">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           {/* Mind Map / Knowledge Graph Button */}
           <button
             onClick={openGraphModal}
@@ -144,6 +144,6 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         </div>
       </div>
-    </header>
+    </div>
   );
 };
