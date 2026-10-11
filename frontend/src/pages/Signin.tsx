@@ -32,8 +32,9 @@ export const Signin: React.FC = () => {
       } else {
         showToast(res.error || 'Invalid credentials', 'error');
       }
-    } catch (err: any) {
-      showToast(err.message || 'Signin failed. Please try again.', 'error');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Signin failed. Please try again.';
+      showToast(message, 'error');
     } finally {
       setLoading(false);
     }

@@ -27,8 +27,9 @@ export const SharedBrain: React.FC = () => {
         } else {
           setError(res.error || 'Shared brain not found');
         }
-      } catch (err: any) {
-        setError(err.message || 'Share link is invalid or disabled');
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : 'Share link is invalid or disabled';
+        setError(message);
       } finally {
         setLoading(false);
       }

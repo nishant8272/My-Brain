@@ -38,8 +38,9 @@ export const Signup: React.FC = () => {
       } else {
         showToast(res.error || 'Registration failed', 'error');
       }
-    } catch (err: any) {
-      showToast(err.message || 'Signup failed. Please try again.', 'error');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Signup failed. Please try again.';
+      showToast(message, 'error');
     } finally {
       setLoading(false);
     }

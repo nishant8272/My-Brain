@@ -32,19 +32,20 @@ export const DashBoard: React.FC = () => {
 
   const { showToast } = useToast();
 
-  const fetchContents = async () => {
+  const fetchContents = React.useCallback(async () => {
     setLoading(true);
     try {
       const res = await api.getContent();
       if (res.contents) {
         setContents(res.contents);
       }
-    } catch (err: any) {
-      showToast(err.message || 'Failed to load content', 'error');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to load content';
+      showToast(message, 'error');
     } finally {
       setLoading(false);
     }
-  };
+  }, [showToast]);
 
   useEffect(() => {
     fetchContents();
@@ -57,15 +58,16 @@ export const DashBoard: React.FC = () => {
     };
     window.addEventListener('keydown', handleGlobalKeyDown);
     return () => window.removeEventListener('keydown', handleGlobalKeyDown);
-  }, []);
+  }, [fetchContents]);
 
   const handleDelete = async (id: string) => {
     try {
       await api.deleteContent(id);
       setContents((prev) => prev.filter((item) => item._id !== id));
       showToast('Content deleted from your Second Brain', 'success');
-    } catch (err: any) {
-      showToast(err.message || 'Failed to delete content', 'error');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to delete content';
+      showToast(message, 'error');
     }
   };
 
@@ -81,8 +83,9 @@ export const DashBoard: React.FC = () => {
           'success'
         );
       }
-    } catch (err: any) {
-      showToast(err.message || 'Failed to toggle favorite', 'error');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to toggle favorite';
+      showToast(message, 'error');
     }
   };
 
@@ -297,12 +300,14 @@ export const DashBoard: React.FC = () => {
       {/* Floating Side Trigger Button */}
       {!isAskAiOpen && (
         <button
+          type="button"
           onClick={() => setIsAskAiOpen(true)}
-          className="fixed bottom-6 right-6 z-30 p-3.5 rounded-full bg-slate-900 hover:bg-black dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white shadow-xl shadow-slate-900/30 dark:shadow-emerald-600/30 flex items-center gap-2 group transition-all hover:scale-105 animate-bounce-subtle border border-slate-800 dark:border-emerald-500/50 cursor-pointer"
+          className="fixed bottom-6 right-6 z-30 px-4 py-3 rounded-full bg-slate-900 hover:bg-black dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white shadow-lg shadow-slate-900/20 dark:shadow-emerald-950/40 flex items-center gap-2.5 group transition-transform active:scale-95 border border-slate-800 dark:border-emerald-500/40 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
           title="Open SecondBrain AI Assistant"
+          aria-label="Open SecondBrain AI Assistant"
         >
-          <Sparkles className="w-5 h-5 text-emerald-400 dark:text-emerald-200 group-hover:rotate-12 transition-transform" />
-          <span className="text-xs font-bold pr-1 hidden sm:inline">Ask AI</span>
+          <Sparkles className="w-4 h-4 text-emerald-400 dark:text-emerald-200 transition-transform group-hover:scale-110" />
+          <span className="text-xs font-semibold pr-1">Ask AI</span>
         </button>
       )}
 

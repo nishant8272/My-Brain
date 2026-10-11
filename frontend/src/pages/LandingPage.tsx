@@ -7,7 +7,6 @@ import {
   Bot, 
   Share2, 
   ArrowRight, 
-  CheckCircle2, 
   ChevronDown, 
   Zap, 
   Layers, 
@@ -63,14 +62,15 @@ export const LandingPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 dark:bg-black dark:text-zinc-100 font-sans selection:bg-emerald-500 selection:text-white overflow-x-hidden">
-      {/* Background Ambient Glow Effects */}
-      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gradient-to-b from-slate-200/50 to-transparent dark:from-emerald-600/10 blur-3xl pointer-events-none z-0" />
-
       {/* Navigation Header */}
-      <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/80 dark:border-zinc-800 dark:bg-zinc-950/80 backdrop-blur-md">
+      <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/90 dark:border-zinc-800 dark:bg-zinc-950/90 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5 group">
+          <Link 
+            to="/" 
+            className="flex items-center gap-2.5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-xl"
+            aria-label="SecondBrain Home"
+          >
             <div className="p-2 rounded-xl bg-slate-900 border-slate-800 text-emerald-400 dark:bg-zinc-800 dark:border-zinc-700 group-hover:scale-105 transition-transform">
               <Brain className="w-5 h-5" />
             </div>
@@ -81,19 +81,19 @@ export const LandingPage: React.FC = () => {
 
           {/* Navigation Links */}
           <nav className="hidden md:flex items-center gap-8 text-xs font-medium text-slate-600 dark:text-zinc-300">
-            <a href="#features" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">Features</a>
-            <a href="#demo" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">Live Demo</a>
-            <a href="#how-it-works" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">How It Works</a>
-            <a href="#pricing" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">Pricing</a>
-            <a href="#faq" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">FAQ</a>
+            <a href="#features" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500 rounded px-1">Features</a>
+            <a href="#demo" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500 rounded px-1">Live Demo</a>
+            <a href="#how-it-works" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500 rounded px-1">How It Works</a>
+            <a href="#faq" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500 rounded px-1">FAQ</a>
           </nav>
 
           {/* Auth Actions */}
           <div className="hidden md:flex items-center gap-3">
             {token ? (
               <button
+                type="button"
                 onClick={() => navigate('/app')}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-900 hover:bg-black text-white dark:bg-emerald-600 dark:hover:bg-emerald-500 text-xs font-bold shadow-lg transition-all hover:scale-105"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-900 hover:bg-black text-white dark:bg-emerald-600 dark:hover:bg-emerald-500 text-xs font-bold shadow-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
               >
                 <span>Go to Dashboard</span>
                 <ArrowRight className="w-4 h-4" />
@@ -102,13 +102,13 @@ export const LandingPage: React.FC = () => {
               <>
                 <Link
                   to="/signin"
-                  className="px-4 py-2 text-xs font-semibold text-slate-700 hover:opacity-80 dark:text-zinc-300 transition-colors"
+                  className="px-4 py-2 text-xs font-semibold text-slate-700 hover:text-slate-900 dark:text-zinc-300 dark:hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-emerald-500 rounded-lg"
                 >
                   Sign In
                 </Link>
                 <Link
                   to="/signup"
-                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-900 hover:bg-black text-white dark:bg-emerald-600 dark:hover:bg-emerald-500 text-xs font-bold shadow-lg transition-all hover:scale-105"
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-900 hover:bg-black text-white dark:bg-emerald-600 dark:hover:bg-emerald-500 text-xs font-bold shadow-sm transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
                 >
                   <span>Get Started Free</span>
                   <ArrowRight className="w-4 h-4" />
@@ -119,8 +119,11 @@ export const LandingPage: React.FC = () => {
 
           {/* Mobile Hamburger Toggle */}
           <button
+            type="button"
+            aria-expanded={isMobileNavOpen}
+            aria-label="Toggle navigation menu"
             onClick={() => setIsMobileNavOpen(!isMobileNavOpen)}
-            className="md:hidden p-2 rounded-xl bg-slate-100 border-slate-200 text-slate-700 dark:text-zinc-400 dark:hover:text-white dark:bg-zinc-900 border"
+            className="md:hidden p-2 rounded-xl bg-slate-100 border-slate-200 text-slate-700 dark:text-zinc-400 dark:hover:text-white dark:bg-zinc-900 border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
           >
             {isMobileNavOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -132,7 +135,6 @@ export const LandingPage: React.FC = () => {
             <a href="#features" onClick={() => setIsMobileNavOpen(false)} className="py-1.5 text-slate-700 dark:text-zinc-300">Features</a>
             <a href="#demo" onClick={() => setIsMobileNavOpen(false)} className="py-1.5 text-slate-700 dark:text-zinc-300">Live Demo</a>
             <a href="#how-it-works" onClick={() => setIsMobileNavOpen(false)} className="py-1.5 text-slate-700 dark:text-zinc-300">How It Works</a>
-            <a href="#pricing" onClick={() => setIsMobileNavOpen(false)} className="py-1.5 text-slate-700 dark:text-zinc-300">Pricing</a>
             <a href="#faq" onClick={() => setIsMobileNavOpen(false)} className="py-1.5 text-slate-700 dark:text-zinc-300">FAQ</a>
             <div className="pt-2 border-t border-slate-200 dark:border-zinc-800 flex flex-col gap-2">
               {token ? (
@@ -431,66 +433,6 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="pricing" className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-3">Pricing</h2>
-          <p className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
-            Simple, Transparent Pricing
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {/* Free Tier */}
-          <div className="p-8 rounded-3xl bg-white border-slate-200 dark:bg-zinc-950 dark:border-zinc-800 border flex flex-col justify-between shadow-sm">
-            <div>
-              <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase">Starter</span>
-              <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-1 mb-4">Free Forever</h3>
-              <div className="text-3xl font-black text-slate-900 dark:text-white mb-6">$0 <span className="text-xs font-normal text-slate-500 dark:text-zinc-400">/ month</span></div>
-
-              <ul className="space-y-3 text-xs text-slate-700 dark:text-zinc-300 mb-8">
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400" /> Save unlimited YouTube videos & Tweets</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400" /> Pinecone 768-dim Vector Search</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400" /> RAG AI Chatbot with OpenRouter</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400" /> Public Brain Share links</li>
-              </ul>
-            </div>
-
-            <button
-              onClick={() => navigate('/signup')}
-              className="w-full py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-white text-xs font-bold transition-colors border border-slate-200 dark:border-zinc-700"
-            >
-              Get Started Free
-            </button>
-          </div>
-
-          {/* Pro Tier */}
-          <div className="p-8 rounded-3xl bg-slate-900 border-slate-800 dark:bg-zinc-950 dark:border-emerald-500/50 border text-white relative flex flex-col justify-between shadow-2xl">
-            <div className="absolute -top-3.5 right-6 px-3 py-1 rounded-full bg-emerald-600 text-white text-[10px] font-bold uppercase tracking-wider">
-              Popular
-            </div>
-            <div>
-              <span className="text-xs font-bold text-emerald-400 uppercase">Pro Vault</span>
-              <h3 className="text-2xl font-black text-white mt-1 mb-4">Power User</h3>
-              <div className="text-3xl font-black text-white mb-6">$9 <span className="text-xs font-normal text-slate-400">/ month</span></div>
-
-              <ul className="space-y-3 text-xs text-slate-300 mb-8">
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Everything in Starter</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Priority OpenRouter LLM Models</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Custom Domain Public Brain Share</li>
-                <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-emerald-400" /> Automated Web Scraping Ingestion</li>
-              </ul>
-            </div>
-
-            <button
-              onClick={() => navigate('/signup')}
-              className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg transition-all hover:scale-[1.02]"
-            >
-              Upgrade to Pro
-            </button>
-          </div>
-        </div>
-      </section>
 
       {/* FAQ Section */}
       <section id="faq" className="py-20 bg-slate-100 border-slate-200 dark:bg-black border-t dark:border-zinc-800 relative z-10">
@@ -507,8 +449,10 @@ export const LandingPage: React.FC = () => {
                 className="rounded-2xl bg-white border-slate-200 dark:bg-zinc-950 dark:border-zinc-800 border overflow-hidden transition-all shadow-sm"
               >
                 <button
+                  type="button"
+                  aria-expanded={expandedFaq === index}
                   onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
-                  className="w-full p-5 text-left flex items-center justify-between gap-4 text-sm font-bold text-slate-900 dark:text-white transition-colors"
+                  className="w-full p-5 text-left flex items-center justify-between gap-4 text-sm font-bold text-slate-900 dark:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-2xl"
                 >
                   <span>{faq.q}</span>
                   <ChevronDown className={`w-4 h-4 text-slate-500 dark:text-zinc-400 shrink-0 transition-transform duration-200 ${expandedFaq === index ? 'rotate-180 text-emerald-500 dark:text-emerald-400' : ''}`} />
@@ -538,7 +482,8 @@ export const LandingPage: React.FC = () => {
 
           <div className="flex items-center gap-6 text-slate-600 dark:text-zinc-400">
             <a href="#features" className="hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">Features</a>
-            <a href="#pricing" className="hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">Pricing</a>
+            <a href="#how-it-works" className="hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">How It Works</a>
+            <a href="#faq" className="hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">FAQ</a>
             <Link to="/signin" className="hover:text-emerald-500 dark:hover:text-emerald-400 transition-colors">Sign In</Link>
           </div>
         </div>

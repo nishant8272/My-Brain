@@ -72,6 +72,15 @@ export const AskAiModal: React.FC<AskAiModalProps> = ({ isOpen, onClose }) => {
   }, [isOpen]);
 
   useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
+  useEffect(() => {
     scrollToBottom();
   }, [messages, loading]);
 
@@ -117,8 +126,9 @@ export const AskAiModal: React.FC<AskAiModalProps> = ({ isOpen, onClose }) => {
       // Refresh sessions list
       const sessRes = await api.getChatSessions();
       if (sessRes.sessions) setSessions(sessRes.sessions);
-    } catch (err: any) {
-      showToast(err.message || 'Failed to generate AI response', 'error');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to generate AI response';
+      showToast(message, 'error');
     } finally {
       setLoading(false);
     }
@@ -135,8 +145,9 @@ export const AskAiModal: React.FC<AskAiModalProps> = ({ isOpen, onClose }) => {
         setShowSessionsDrawer(false);
         showToast('Started a new chat session!', 'success');
       }
-    } catch (err: any) {
-      showToast(err.message || 'Failed to create chat session', 'error');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to create chat session';
+      showToast(message, 'error');
     }
   };
 
@@ -161,7 +172,7 @@ export const AskAiModal: React.FC<AskAiModalProps> = ({ isOpen, onClose }) => {
           handleNewSession();
         }
       }
-    } catch (err: any) {
+    } catch {
       showToast('Failed to delete chat session', 'error');
     }
   };
@@ -171,7 +182,7 @@ export const AskAiModal: React.FC<AskAiModalProps> = ({ isOpen, onClose }) => {
       await api.clearChat(activeSessionId || undefined);
       setMessages([]);
       showToast('Chat history cleared!', 'info');
-    } catch (err: any) {
+    } catch {
       showToast('Failed to clear chat history', 'error');
     }
   };
@@ -251,7 +262,12 @@ export const AskAiModal: React.FC<AskAiModalProps> = ({ isOpen, onClose }) => {
       />
 
       {/* Slide-out Side Panel Drawer */}
-      <div className="fixed top-0 right-0 bottom-0 z-50 h-full w-full sm:w-[540px] md:w-[620px] lg:w-[680px] bg-white border-slate-200 dark:bg-zinc-950 dark:border-zinc-800 border-l shadow-2xl flex flex-col transition-transform duration-300 transform translate-x-0 animate-slide-left overflow-hidden">
+      <div 
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ai-assistant-title"
+        className="fixed top-0 right-0 bottom-0 z-50 h-full w-full sm:w-[540px] md:w-[620px] lg:w-[680px] bg-white border-slate-200 dark:bg-zinc-950 dark:border-zinc-800 border-l shadow-2xl flex flex-col transition-transform duration-300 transform translate-x-0 animate-slide-left overflow-hidden"
+      >
         
         {/* Drawer Header */}
         <div className="flex items-center justify-between p-3.5 sm:p-4 border-b border-slate-200 bg-white dark:border-zinc-800 dark:bg-zinc-950 shrink-0">
@@ -260,7 +276,7 @@ export const AskAiModal: React.FC<AskAiModalProps> = ({ isOpen, onClose }) => {
               <Sparkles className="w-5 h-5" />
             </div>
             <div className="overflow-hidden">
-              <h2 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate flex items-center gap-2">
+              <h2 id="ai-assistant-title" className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white truncate flex items-center gap-2">
                 <span className="truncate">{activeSessionTitle || 'SecondBrain Assistant'}</span>
               </h2>
               <p className="text-[11px] text-emerald-600 dark:text-emerald-400">RAG AI search & recommendations</p>

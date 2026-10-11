@@ -3,23 +3,7 @@ import { X, Network, RotateCw, Play, Pause, ExternalLink, Sparkles, Filter, Sear
 import ForceGraph3D from '3d-force-graph';
 import * as THREE from 'three';
 import { api } from '../services/api';
-
-interface GraphNode {
-  id: string;
-  label: string;
-  type: string;
-  details?: any;
-  x?: number;
-  y?: number;
-  z?: number;
-}
-
-interface GraphEdge {
-  id: string;
-  source: string | GraphNode;
-  target: string | GraphNode;
-  label?: string;
-}
+import type { GraphNode, GraphEdge } from '../types';
 
 interface KnowledgeGraphModalProps {
   isOpen: boolean;
@@ -41,7 +25,23 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
   const [isAutoRotating, setIsAutoRotating] = useState(true);
 
   const graphContainerRef = useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const graphInstanceRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isOpen, onClose]);
 
   useEffect(() => {
     if (isOpen) {
@@ -62,8 +62,9 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
         setNodes(res.nodes || []);
         setEdges(res.edges || []);
       }
-    } catch (err: any) {
-      console.warn('Failed to load knowledge graph:', err.message);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to load knowledge graph';
+      console.warn('Failed to load knowledge graph:', message);
     } finally {
       setLoading(false);
     }
@@ -95,8 +96,8 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
 
     const nodeSet = new Set(filteredNodes.map((n) => n.id));
     const filteredEdges = edges.filter((e) => {
-      const srcId = typeof e.source === 'object' ? (e.source as any).id : e.source;
-      const tgtId = typeof e.target === 'object' ? (e.target as any).id : e.target;
+      const srcId = typeof e.source === 'object' ? (e.source as GraphNode).id : e.source;
+      const tgtId = typeof e.target === 'object' ? (e.target as GraphNode).id : e.target;
       return nodeSet.has(srcId) && nodeSet.has(tgtId);
     });
 
@@ -110,15 +111,16 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
       const width = container.clientWidth || 800;
       const height = container.clientHeight || 550;
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const graph = (ForceGraph3D as any)({ controlType: 'orbit' })(container)
         .width(width)
         .height(height)
         .backgroundColor('#000000') // Pitch Black background
         .showNavInfo(false)
         .nodeRelSize(7)
-        .nodeVal((node: any) => (node.type === 'tag' ? 5 : 8))
-        .nodeColor((node: any) => getNodeColorHex(node.type))
-        .nodeThreeObject((node: any) => {
+        .nodeVal((node: GraphNode) => (node.type === 'tag' ? 5 : 8))
+        .nodeColor((node: GraphNode) => getNodeColorHex(node.type))
+        .nodeThreeObject((node: GraphNode) => {
           // Custom 3D Glowing Sphere with 3D Canvas Label
           const group = new THREE.Group();
 
@@ -191,18 +193,21 @@ export const KnowledgeGraphModal: React.FC<KnowledgeGraphModalProps> = ({
         .linkDirectionalParticles(3)
         .linkDirectionalParticleWidth(2.5)
         .linkDirectionalParticleSpeed(0.006)
-        .linkDirectionalParticleColor((link: any) => {
-          const targetNode = typeof link.target === 'object' ? link.target : null;
+        .linkDirectionalParticleColor((link: GraphEdge) => {
+          const targetNode = typeof link.target === 'object' ? (link.target as GraphNode) : null;
           return targetNode ? getNodeColorHex(targetNode.type) : '#10b981';
         })
-        .onNodeClick((node: any) => {
+        .onNodeClick((node: GraphNode) => {
           setSelectedNode(node);
 
           // Smooth 3D Camera Focus
+          const nx = node.x ?? 0;
+          const ny = node.y ?? 0;
+          const nz = node.z ?? 0;
           const distance = 120;
-          const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
+          const distRatio = 1 + distance / (Math.hypot(nx, ny, nz) || 1);
           graph.cameraPosition(
-            { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio },
+            { x: nx * distRatio, y: ny * distRatio, z: nz * distRatio },
             node, // lookAt
             1200  // transition duration ms
           );

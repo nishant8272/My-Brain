@@ -16,25 +16,32 @@ export const ShareBrainModal: React.FC<ShareBrainModalProps> = ({ isOpen, onClos
   const { showToast } = useToast();
 
   useEffect(() => {
-    if (isOpen) {
-      // Check existing share status
-      const checkStatus = async () => {
-        setLoading(true);
-        try {
-          const res = await api.toggleShare(true);
-          if (res.hash) {
-            setIsPublic(true);
-            setShareHash(res.hash);
-          }
-        } catch (err) {
-          setIsPublic(false);
-        } finally {
-          setLoading(false);
+    if (!isOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+
+    // Check existing share status
+    const checkStatus = async () => {
+      setLoading(true);
+      try {
+        const res = await api.toggleShare(true);
+        if (res.hash) {
+          setIsPublic(true);
+          setShareHash(res.hash);
         }
-      };
-      checkStatus();
-    }
-  }, [isOpen]);
+      } catch {
+        setIsPublic(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkStatus();
+
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -54,8 +61,9 @@ export const ShareBrainModal: React.FC<ShareBrainModalProps> = ({ isOpen, onClos
         setShareHash(null);
         showToast('Share link disabled!', 'info');
       }
-    } catch (err: any) {
-      showToast(err.message || 'Failed to update share settings', 'error');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to update share settings';
+      showToast(message, 'error');
     } finally {
       setLoading(false);
     }
@@ -70,8 +78,17 @@ export const ShareBrainModal: React.FC<ShareBrainModalProps> = ({ isOpen, onClos
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-      <div className="relative w-full max-w-md bg-white border-slate-200 text-slate-900 dark:bg-zinc-950 dark:border-zinc-800 border rounded-2xl shadow-2xl p-6 overflow-hidden">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in"
+      onClick={onClose}
+    >
+      <div 
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="share-brain-title"
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-md bg-white border-slate-200 text-slate-900 dark:bg-zinc-950 dark:border-zinc-800 border rounded-2xl shadow-2xl p-6 overflow-hidden"
+      >
         {/* Header */}
         <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-200 dark:border-zinc-800">
           <div className="flex items-center gap-2.5">
@@ -79,13 +96,15 @@ export const ShareBrainModal: React.FC<ShareBrainModalProps> = ({ isOpen, onClos
               <Share2 className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Share Your Brain</h2>
+              <h2 id="share-brain-title" className="text-lg font-bold text-slate-900 dark:text-white">Share Your Brain</h2>
               <p className="text-xs text-slate-500 dark:text-zinc-400">Allow others to view your public collection</p>
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-zinc-800 transition-colors"
+            aria-label="Close modal"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 dark:text-zinc-400 dark:hover:text-white dark:hover:bg-zinc-800 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
           >
             <X className="w-5 h-5" />
           </button>

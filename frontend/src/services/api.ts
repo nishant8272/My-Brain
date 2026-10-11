@@ -1,4 +1,4 @@
-import type { AuthResponse, ContentItem, AskResponse, SharedBrainResponse, ContentType, ChatMessage, ChatSessionItem } from '../types';
+import type { AuthResponse, ContentItem, AskResponse, SharedBrainResponse, ContentType, ChatMessage, ChatSessionItem, GraphNode, GraphEdge } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api/user';
 
@@ -54,8 +54,8 @@ export const api = {
 
   async getKnowledgeGraph(): Promise<{
     success: boolean;
-    nodes: Array<{ id: string; label: string; type: string; details?: any }>;
-    edges: Array<{ id: string; source: string; target: string; label?: string }>;
+    nodes: GraphNode[];
+    edges: GraphEdge[];
   }> {
     const res = await fetch(`${API_BASE_URL}/content/graph`, {
       headers: getHeaders(),

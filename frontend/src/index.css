@@ -9,7 +9,7 @@
 
   html.dark {
     color-scheme: dark;
-    background-color: #000000;
+    background-color: #09090b;
     color: #f4f4f5;
   }
 
@@ -23,6 +23,12 @@
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     transition: background-color 0.2s ease, color 0.2s ease;
   }
+
+  /* Accessible focus indicators */
+  :focus-visible {
+    outline: 2px solid #10b981;
+    outline-offset: 2px;
+  }
 }
 
 @layer utilities {
@@ -35,18 +41,18 @@
     background: transparent;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(161, 161, 170, 0.2);
+    background: rgba(161, 161, 170, 0.25);
     border-radius: 9999px;
   }
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: rgba(161, 161, 170, 0.4);
+    background: rgba(161, 161, 170, 0.45);
   }
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: scale(0.97);
+    transform: scale(0.98);
   }
   to {
     opacity: 1;
@@ -55,7 +61,7 @@
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes slideLeft {
@@ -68,14 +74,17 @@
 }
 
 .animate-slide-left {
-  animation: slideLeft 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slideLeft 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes bounceSubtle {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
-}
-
-.animate-bounce-subtle {
-  animation: bounceSubtle 3s ease-in-out infinite;
+/* Reduced motion preference respect */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

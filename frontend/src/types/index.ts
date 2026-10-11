@@ -68,3 +68,27 @@ export interface SharedBrainResponse {
   contents: ContentItem[];
   error?: string;
 }
+
+export interface GraphNodeDetails {
+  textSnippet?: string;
+  link?: string;
+  tags?: string[];
+  [key: string]: unknown;
+}
+
+export interface GraphNode {
+  id: string;
+  label: string;
+  type: string;
+  details?: GraphNodeDetails;
+  x?: number;
+  y?: number;
+  z?: number;
+}
+
+export interface GraphEdge {
+  id: string;
+  source: string | GraphNode;
+  target: string | GraphNode;
+  label?: string;
+}

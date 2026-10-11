@@ -147,10 +147,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-start justify-center pt-16 px-4 bg-black/80 backdrop-blur-md animate-fade-in"
+      className="fixed inset-0 z-50 flex items-start justify-center pt-16 px-4 bg-black/70 backdrop-blur-sm animate-fade-in"
       onClick={onClose}
     >
       <div 
+        role="dialog"
+        aria-modal="true"
+        aria-label="Command Palette"
         className="relative w-full max-w-2xl bg-white border-slate-200 text-slate-900 dark:bg-zinc-950 dark:border-zinc-800 border rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]"
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleKeyDownNav}
